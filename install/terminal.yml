@@ -1,0 +1,17 @@
+---
+
+- clean: ['~']
+
+# See https://ohmyz.sh/
+- shell:
+  - command: |
+      sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    description: Install Oh-My-Zsh
+    stdout: true
+    stderr: true
+
+- link:
+    ~/.tmux.conf: .tmux.conf
+    ~/.config/.alacritty.yml: ~/.config/alacritty/alacritty.yml
+    ~/.config/nvim/: ~/.config/nvim-setup
+

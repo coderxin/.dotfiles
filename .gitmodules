@@ -1,12 +1,9 @@
-[submodule "dotbot"]
-	path = dotbot
-  url = https://github.com/anishathalye/dotbot
-[submodule "dotbot-brewfile"]
-	path = dotbot-brewfile
-	url = https://github.com/sobolevn/dotbot-brewfile.git
-[submodule "dotbot-pip"]
-	path = dotbot-pip
-	url = https://github.com/sobolevn/dotbot-pip.git
 [submodule "nvim"]
 	path = .config/nvim-setup
-	url = git@github.com:coderxin/nvim-setup.git
+	url = git@github.com:coderxin/nvim-setup
+[submodule "dotbot"]
+	path = dotbot
+	url = https://github.com/anishathalye/dotbot
+[submodule "dotbot-brewfile"]
+	path = dotbot-brewfile
+	url = https://github.com/sobolevn/dotbot-brewfile
