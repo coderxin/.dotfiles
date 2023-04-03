@@ -12,6 +12,10 @@
 
 - link:
     ~/.tmux.conf: .tmux.conf
-    ~/.config/.alacritty.yml: ~/.config/alacritty/alacritty.yml
-    ~/.config/nvim/: ~/.config/nvim-setup
+    ~/.config/.alacritty.yml: .config/alacritty/alacritty.yml
+    ~/.config/nvim/: .config/nvim-setup/
+    ~/Library/Application Support/lazygit/config.yml:
+      relink: true
+      force: true
+      path: .config/lazygit/config.yml
 
