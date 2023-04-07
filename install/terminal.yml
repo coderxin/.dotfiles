@@ -11,6 +11,10 @@
     stderr: true
 
 - link:
+    ~/.zsh_profile:
+      relink: true
+      force: true
+      path: shell/.zsh_profile
     ~/.tmux.conf: .tmux.conf
     ~/.config/.alacritty.yml: .config/alacritty/alacritty.yml
     ~/.config/nvim/: .config/nvim-setup/
@@ -18,4 +22,7 @@
       relink: true
       force: true
       path: .config/lazygit/config.yml
+    ~/.config/git/ignore:
+      create: true
+      path: .config/git/ignore
 
