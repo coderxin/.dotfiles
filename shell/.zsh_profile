@@ -1,0 +1,20 @@
+# Set XDG_CONFIG_HOME directory
+export XDG_CONFIG_HOME=$HOME/.config
+
+# bat styling
+alias bat="\bat --theme=GitHub"
+
+# Git aliases
+alias gll="git log --graph --pretty=oneline --abbrev-commit"
+
+# Solution to allow Lazygit to work with Nvim (https://github.com/kdheepak/lazygit.nvim/issues/67#issuecomment-1307774937)
+alias vim="nvim --listen /tmp/nvim-server.pipe"
+
+# Show local IP
+alias localip="ipconfig getifaddr en0"
+
+# Copy public key to clipboard
+alias pubkey="cat ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to pasteboard.'"
+
+# Shortcut to ~/Development directory
+function c { cd ~/Development/$1; }
