@@ -1,8 +1,19 @@
-# Set XDG_CONFIG_HOME directory
-export XDG_CONFIG_HOME=$HOME/.config
+#!/usr/bin/env bash
+
+# `.aliases` is used to provide custom variables.
+#
+# This file is used as a part of `.zshrc`
+
+# === Aliases ===
+
+# cloack vim
+alias vim="nvim"
 
 # bat styling
 alias bat="\bat --theme=GitHub"
+
+# using bat instead of cat
+alias cat="\bat"
 
 # Git aliases
 alias gll="git log --graph --pretty=oneline --abbrev-commit"
@@ -16,5 +27,3 @@ alias localip="ipconfig getifaddr en0"
 # Copy public key to clipboard
 alias pubkey="cat ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to pasteboard.'"
 
-# Shortcut to ~/Development directory
-function c { cd ~/Development/$1; }
