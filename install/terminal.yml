@@ -1,5 +1,10 @@
 ---
 
+- defaults:
+    link:
+      relink: true
+      force: true
+
 - clean: ['~']
 
 # See https://ohmyz.sh/
@@ -11,17 +16,14 @@
     stderr: true
 
 - link:
-    ~/.zsh_profile:
-      relink: true
-      force: true
-      path: shell/.zsh_profile
+    ~/.shell:
+      create: true
+      path: shell
+    ~/.zshrc: .config/.zshrc
     ~/.tmux.conf: .tmux.conf
     ~/.config/.alacritty.yml: .config/alacritty/alacritty.yml
     ~/.config/nvim/: .config/nvim-setup/
-    ~/Library/Application Support/lazygit/config.yml:
-      relink: true
-      force: true
-      path: .config/lazygit/config.yml
+    ~/Library/Application Support/lazygit/config.yml: .config/lazygit/config.yml
     ~/.config/git/ignore:
       create: true
       path: .config/git/ignore
