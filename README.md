@@ -1,21 +1,11 @@
 # .dotfiles
 
-These are my dotfiles.
-
 ## Installation
 
-On a fresh installation of macOS:
+We are using [`dotbot`](https://github.com/anishathalye/dotbot/)
+to set things up. Steps:
 
-```sh
-sudo softwareupdate -i -a
-xcode-select --install
-```
-
-The Xcode Command Line Tools includes `git` and `make`.
-
-### Install this repo with `curl`:
-
-```sh
-bash -c "`curl -fsSL https://raw.githubusercontent.com/coderxin/.dotfiles/master/remote-install.sh`"
-```
+1. Clone this repo with: `git clone https://github.com/coderxin/.dotfiles dotfiles`
+2. `cd dotfiles/`
+3. Run: [`bash ./install.sh`](https://github.com/coderxin/.dotfiles/blob/master/install.sh)
 

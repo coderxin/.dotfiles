@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# `.exports` is used to provide custom variables.
+#
+# This file is used as a part of `.zshrc`
+
+
+# === General ===
+
+export XDG_CONFIG_HOME=$HOME/.config
+
+export VOLTA_HOME="$HOME/.volta"
+
+export HOMEBREW_NO_ANALYTICS=1  # disables statistics that brew collects
+
+export EDITOR=$(which nvim)
+
+# === Path modifications ===
+
+PATH="$PATH:$HOME/.rvm/bin"
+
+PATH="/usr/local/sbin:$PATH"
+
+PATH="$VOLTA_HOME/bin:$PATH"
+
+PATH="$PATH:$HOME/.bin"
+
+export PATH
