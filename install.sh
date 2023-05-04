@@ -32,4 +32,5 @@ run_dotbot () {
 }
 
 run_dotbot 'install/terminal.yml' || true
+run_dotbot 'install/bin.yml' || true
 run_dotbot 'install/brew.yml' || true
