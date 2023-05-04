@@ -1,0 +1,13 @@
+---
+
+- defaults:
+    link:
+      relink: true
+      force: true
+
+- clean: ['~']
+
+- link:
+    ~/.bin/git-changelog: bin/git-changelog
+    ~/.bin/git-commits-since: bin/git-commits-since
+    ~/.bin/transliterate: bin/transliterate
