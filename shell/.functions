@@ -32,3 +32,11 @@ man () {
     LESS_TERMCAP_us=$(printf "\e[1;32m") \
       man "$@"
 }
+
+# Git functions
+ga () {
+  git add ${*:-.}
+}
+gt () {
+  git branch --set-upstream $1 origin/$1
+}

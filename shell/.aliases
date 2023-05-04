@@ -6,6 +6,12 @@
 
 # === Aliases ===
 
+# reload shell
+alias reload='. ~/.zshrc'
+
+# another way to exit
+alias quit='exit'
+
 # cloack vim
 alias vim="nvim"
 
@@ -15,8 +21,24 @@ alias bat="\bat --theme=GitHub"
 # using bat instead of cat
 alias cat="\bat"
 
-# Git aliases
-alias gll="git log --graph --pretty=oneline --abbrev-commit"
+# git aliases
+alias g='git'
+alias gm='git merge'
+alias gp='git pull --rebase'
+alias gpsh='git push'
+alias gpu='git push origin'
+alias gd='git diff'
+alias gds='git diff --stat'
+alias gdc='git diff --cached'
+alias gdcs='git diff --cached --stat'
+alias gc='git commit'
+alias gci='git commit'
+alias gco='git checkout'
+alias gb='git branch'
+alias gs='git status'
+alias gst='git status'
+alias gl='git log --graph "--pretty=format:%C(yellow bold)%h%Creset by %C(red)%an%Creset (%ar)%C(cyan bold)%d%Creset%n%s%n%b" --all'
+alias gll='git log --graph --pretty=oneline --abbrev-commit'
 
 # Solution to allow Lazygit to work with Nvim (https://github.com/kdheepak/lazygit.nvim/issues/67#issuecomment-1307774937)
 alias vim="nvim --listen /tmp/nvim-server.pipe"
@@ -26,4 +48,3 @@ alias localip="ipconfig getifaddr en0"
 
 # Copy public key to clipboard
 alias pubkey="cat ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to pasteboard.'"
-

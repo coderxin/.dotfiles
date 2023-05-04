@@ -4,16 +4,15 @@
     link:
       relink: true
       force: true
+    shell:
+      stdout: true
+      stderr: true
 
 - clean: ['~']
 
-# See https://ohmyz.sh/
 - shell:
-  - command: |
-      sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    description: Install Oh-My-Zsh
-    stdout: true
-    stderr: true
+  - command: sh install/pre-install.sh
+    description: Running pre installation script
 
 - link:
     ~/.shell:
@@ -27,4 +26,3 @@
     ~/.config/git/ignore:
       create: true
       path: .config/git/ignore
-
