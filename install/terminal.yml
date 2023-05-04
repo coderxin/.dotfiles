@@ -19,7 +19,7 @@
       create: true
       path: shell
     ~/.zshrc: .config/.zshrc
-    ~/.tmux.conf: .tmux.conf
+    ~/.tmux.conf: .config/.tmux.conf
     ~/.config/.alacritty.yml: .config/alacritty/alacritty.yml
     ~/.config/nvim/: .config/nvim-setup/
     ~/Library/Application Support/lazygit/config.yml: .config/lazygit/config.yml

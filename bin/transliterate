@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# Recursively transcodes the names of files and directories
+# in the current directory into russian transliteration.
+ 
+shopt -s nullglob
+ 
+for NAME in * ; do
+ 
+  # Change the square brackets to round brackets in the file
+  # name - otherwise sed wedges with square brackets
+  NBR=`echo "$NAME" | tr '[' '('`
+  NBR=`echo "$NBR"  | tr ']' ')'`
+  if [[ "$NAME" != "$NBR" ]]; then
+    mv -v -- "$NAME" "$NBR"
+  fi
+ 
+  # We change the hyphen at the beginning of the file name to
+  # an underscore character - so that commands did not accept
+  # such filenames as parameters
+  DSH=`echo $NBR  | sed "s/^-/_/g"`
+  if [[ "$DSH" != "$NBR" ]]; then
+    mv -v -- "$NBR" "$DSH"
+  fi
+ 
+  TRS=`echo $DSH  | sed "y/абвгдезийклмнопрстуфхцы/abvgdezijklmnoprstufxcy/"`
+  TRS=`echo $TRS  | sed "y/АБВГДЕЗИЙКЛМНОПРСТУФХЦЫ/ABVGDEZIJKLMNOPRSTUFXCY/"`
+  TRS=${TRS//ч/ch};
+  TRS=${TRS//Ч/CH} TRS=${TRS//ш/sh};
+  TRS=${TRS//Ш/SH} TRS=${TRS//ё/yo};
+  TRS=${TRS//Ё/YO} TRS=${TRS//ж/zh};
+  TRS=${TRS//Ж/ZH} TRS=${TRS//щ/sch};
+  TRS=${TRS//Щ/SСH} TRS=${TRS//э/ye};
+  TRS=${TRS//Э/YE} TRS=${TRS//ю/yu};
+  TRS=${TRS//Ю/YU} TRS=${TRS//я/ya};
+  TRS=${TRS//Й/J} TRS=${TRS//й/j};
+  TRS=${TRS//Я/YA} TRS=${TRS//ъ/\'};
+  TRS=${TRS//Ъ/\'} TRS=${TRS//ь/\'};
+  TRS=${TRS//Ь/\'} 
+ 
+  if [[ `file -b "$DSH"` == directory ]]; then
+    if [[ "$DSH" != "$TRS" ]]; then
+      mv -v "$DSH" "$TRS"
+    fi
+      cd "$TRS"
+      "$0"
+      cd ..
+  else
+    if [[ "$DSH" != "$TRS" ]]; then
+      mv -v "$DSH" "$TRS"
+    fi
+  fi
+done
