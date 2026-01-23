@@ -38,7 +38,7 @@ alias gb='git branch'
 alias gs='git status'
 alias gst='git status'
 alias gl='git log --graph "--pretty=format:%C(yellow bold)%h%Creset by %C(red)%an%Creset (%ar)%C(cyan bold)%d%Creset%n%s%n%b" --all'
-alias gll='git log --graph --pretty=oneline --abbrev-commit'
+alias gll='git log --pretty=oneline --abbrev-commit'
 
 # Solution to allow Lazygit to work with Nvim (https://github.com/kdheepak/lazygit.nvim/issues/67#issuecomment-1307774937)
 alias vim="nvim --listen /tmp/nvim-server.pipe"
@@ -48,3 +48,15 @@ alias localip="ipconfig getifaddr en0"
 
 # Copy public key to clipboard
 alias pubkey="cat ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to pasteboard.'"
+
+# Open ports
+alias oports="sudo lsof -i -n -P | grep TCP"
+
+# Tmux / Tmuxinator aliases
+alias mux='tmuxinator'
+alias muxr='tmuxinator start rails'
+alias muxrs='tmuxinator start rust'
+alias muxn='tmuxinator start node'
+alias muxk='tmuxinator start k8s'
+alias muxp='tmuxinator start project'
+alias tp='tmux-project'

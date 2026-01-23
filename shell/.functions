@@ -34,9 +34,38 @@ man () {
 }
 
 # Git functions
-ga () {
-  git add ${*:-.}
+# ga () {
+#   git add ${*:-.}
+# }
+# # gt () {
+# #   git branch --set-upstream $1 origin/$1
+# # }
+
+# Tmux / Tmuxinator functions
+
+# Smart project starter - detects project type and launches appropriate tmuxinator template
+tmux-project() {
+    local project_name=${1:-$(basename $(pwd))}
+    local project_path=${2:-$(pwd)}
+
+    if [ -f "$project_path/Gemfile" ]; then
+        tmuxinator start rails "$project_name" "$project_path"
+    elif [ -f "$project_path/Cargo.toml" ]; then
+        tmuxinator start rust "$project_name" "$project_path"
+    elif [ -f "$project_path/package.json" ]; then
+        tmuxinator start node "$project_name" "$project_path"
+    elif [ -f "$project_path/terraform.tfvars" ] || [ -d "$project_path/k8s" ]; then
+        tmuxinator start k8s "$project_name" "$project_path"
+    else
+        tmuxinator start project "$project_name" "$project_path"
+    fi
 }
-gt () {
-  git branch --set-upstream $1 origin/$1
+
+# FZF-based tmux session switcher
+ts() {
+    local session
+    session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --prompt="Select session: " --height=40% --reverse)
+    if [ -n "$session" ]; then
+        tmux switch-client -t "$session" 2>/dev/null || tmux attach-session -t "$session"
+    fi
 }
