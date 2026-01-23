@@ -67,3 +67,5 @@ node_modules/
 dist/
 build/
 .eslintcache
+
+**/.claude/settings.local.json

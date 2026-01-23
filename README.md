@@ -46,9 +46,8 @@ ts
 - Zoxide for smart directory navigation
 
 ### Terminal
-- Alacritty with Tokyo Night theme
+- Ghostty with Tokyo Night theme
 - Hack Nerd Font for icon support
-- 120x40 default window, 58% opacity
 
 ### Editor
 - Neovim 0.8+ with Lua configuration

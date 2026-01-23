@@ -9,20 +9,20 @@
 
 export XDG_CONFIG_HOME=$HOME/.config
 
-export VOLTA_HOME="$HOME/.volta"
-
 export HOMEBREW_NO_ANALYTICS=1  # disables statistics that brew collects
 
 export EDITOR=$(which nvim)
 
 # === Path modifications ===
 
-PATH="$PATH:$HOME/.rvm/bin"
-
 PATH="/usr/local/sbin:$PATH"
-
-PATH="$VOLTA_HOME/bin:$PATH"
-
 PATH="$PATH:$HOME/.bin"
+PATH="$PATH:/Users/andrejseisaks/.local/bin"  # pipx
+PATH="$HOME/.cargo/bin:$PATH"  # Rust
+PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"  # Solana
+PATH="/Library/TeX/texbin:$PATH"  # TeX
+PATH="/Users/andrejseisaks/.opencode/bin:$PATH"  # opencode
+PATH="/usr/local/opt/mysql@8.4/bin:$PATH"  # MySQL 8.4
+PATH="/usr/local/opt/php/bin:$PATH"  # PHP
 
 export PATH

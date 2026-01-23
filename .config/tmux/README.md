@@ -8,7 +8,7 @@ A comprehensive, production-ready tmux configuration optimized for polyglot deve
 - **Vi-Mode Everything** - Vi keybindings throughout (copy mode, navigation, pane management)
 - **Smart Session Management** - Auto-detecting project templates with tmuxinator
 - **Tool Integration** - Popup integrations for lazygit, tig, and k9s
-- **True Color Support** - Optimized for Alacritty with Tokyo Night theme
+- **True Color Support** - Optimized for Ghostty with Tokyo Night theme
 - **Session Persistence** - Auto-save and restore sessions with resurrect/continuum
 
 ## Status Bar Layout
@@ -299,7 +299,7 @@ prefix + Alt+u
 
 ## Performance Optimizations
 
-- **True Color Support** - `tmux-256color` with Alacritty overrides
+- **True Color Support** - `tmux-256color` with Ghostty overrides
 - **Fast Escape Time** - 10ms for Neovim compatibility
 - **Large History** - 50,000 lines scrollback buffer
 - **Aggressive Resize** - Smart window sizing
