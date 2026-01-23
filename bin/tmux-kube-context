@@ -1,0 +1,27 @@
+#!/bin/bash
+# Display current Kubernetes context and namespace for tmux status bar
+
+# Check if kubectl is available
+if ! command -v kubectl &> /dev/null; then
+    exit 0
+fi
+
+# Get current context
+context=$(kubectl config current-context 2>/dev/null)
+if [ -z "$context" ]; then
+    exit 0
+fi
+
+# Get current namespace
+namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
+if [ -z "$namespace" ]; then
+    namespace="default"
+fi
+
+# Shorten context name if it's too long
+if [ ${#context} -gt 20 ]; then
+    context="${context:0:17}..."
+fi
+
+# Output with icon
+echo "☸ ${context}:${namespace}"
