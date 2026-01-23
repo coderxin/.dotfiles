@@ -8,6 +8,7 @@
 - clean: ['~']
 
 - link:
+    ~/.bin/git-better-branch: bin/git-better-branch
     ~/.bin/git-summary: bin/git-summary
     ~/.bin/git-commits-since: bin/git-commits-since
     ~/.bin/transliterate: bin/transliterate
