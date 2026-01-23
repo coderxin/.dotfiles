@@ -1,1 +1,7 @@
 Brewfile.lock.json
+
+# Backup files
+.tmux.conf.backup
+
+# Claude Code
+.claude/
