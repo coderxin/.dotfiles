@@ -473,44 +473,259 @@ tmux show-options -g | grep prefix
 ~/.local/share/tmux/resurrect/  # Session backups
 ```
 
+## Complete Keyboard Shortcuts Map
+
+**Prefix Key:** `Ctrl+a` (All shortcuts below require pressing prefix first unless noted)
+
+### Essential Shortcuts (Most Used)
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `C-a` | Send prefix to application | Pass through prefix key |
+| `prefix` then `?` | List all keybindings | Built-in help |
+| `prefix` then `r` | Reload config | Shows confirmation |
+| `prefix` then `e` | Edit config in nvim | Opens in new window |
+
+---
+
+### Window Management
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `c` | Create new window | Opens in current path |
+| `prefix` then `C-h` | Previous window | Repeatable |
+| `prefix` then `C-l` | Next window | Repeatable |
+| `prefix` then `<` | Move window left | Swaps position in status bar |
+| `prefix` then `>` | Move window right | Swaps position in status bar |
+| `prefix` then `w` | Window tree picker | Interactive chooser |
+| `prefix` then `[0-9]` | Select window by number | Built-in |
+| `prefix` then `R` | Rename session | Uppercase R |
+| `prefix` then `,` | Rename window | Built-in, shows prompt |
+| `prefix` then `x` | Kill pane | No confirmation |
+| `prefix` then `X` | Kill window | No confirmation |
+| `prefix` then `Q` | Kill session | With confirmation prompt |
+| `prefix` then `&` | Kill window | Built-in with confirmation |
+
+---
+
+### Pane Management - Splitting & Navigation
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `\|` | Split horizontal | Creates pane to the right |
+| `prefix` then `-` | Split vertical | Creates pane below |
+| `Ctrl+h` | Navigate left | No prefix! (vim-tmux-navigator) |
+| `Ctrl+j` | Navigate down | No prefix! (vim-tmux-navigator) |
+| `Ctrl+k` | Navigate up | No prefix! (vim-tmux-navigator) |
+| `Ctrl+l` | Navigate right | No prefix! (vim-tmux-navigator) |
+| `prefix` then `o` | Cycle through panes | Built-in |
+| `prefix` then `q` | Show pane numbers | Built-in, then press number |
+| `prefix` then `;` | Last active pane | Built-in |
+
+---
+
+### Pane Management - Resizing
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `h` | Resize left 5 lines | Repeatable - hold h |
+| `prefix` then `j` | Resize down 5 lines | Repeatable - hold j |
+| `prefix` then `k` | Resize up 5 lines | Repeatable - hold k |
+| `prefix` then `l` | Resize right 5 lines | Repeatable - hold l |
+| `prefix` then `H` | Resize left 2 lines | Fine-grained, repeatable |
+| `prefix` then `J` | Resize down 2 lines | Fine-grained, repeatable |
+| `prefix` then `K` | Resize up 2 lines | Fine-grained, repeatable |
+| `prefix` then `L` | Resize right 2 lines | Fine-grained, repeatable |
+| `prefix` then `m` | Zoom pane | Toggle maximize/restore |
+| `prefix` then `z` | Zoom pane | Built-in alternative |
+
+---
+
+### Pane Management - Advanced
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `b` | Break pane | Move pane to new window |
+| `prefix` then `j` | Join pane horizontal | Choose source window |
+| `prefix` then `J` | Join pane vertical | Choose source window |
+| `prefix` then `{` | Swap pane up | Repeatable |
+| `prefix` then `}` | Swap pane down | Repeatable |
+| `prefix` then `S` | Toggle pane sync | Type in all panes at once |
+| `prefix` then `M` | Mark pane | For operations like join |
+| `prefix` then `!` | Break pane to window | Built-in alternative to 'b' |
+| `prefix` then `C-o` | Rotate panes | Built-in |
+
+---
+
+### Session Management
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `s` | FZF session picker | Popup with fuzzy search |
+| `prefix` then `C-j` | Session tree view | Full tree with preview |
+| `prefix` then `Space` | Last session | Quick toggle |
+| `prefix` then `N` | New session | Prompts for name |
+| `prefix` then `D` | Detach other clients | Keep only your connection |
+| `prefix` then `d` | Detach current client | Built-in |
+| `prefix` then `(` | Previous session | Built-in |
+| `prefix` then `)` | Next session | Built-in |
+| `prefix` then `$` | Rename session | Built-in, shows prompt |
+
+---
+
+### Copy Mode (Vi-style)
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `Enter` | Enter copy mode | Start scrolling/selecting |
+| `prefix` then `/` | Search backward | Quick copy mode + search |
+| `prefix` then `[` | Enter copy mode | Built-in alternative |
+| `prefix` then `P` | Paste buffer | Uppercase P |
+| `prefix` then `]` | Paste buffer | Built-in alternative |
+| `prefix` then `=` | Choose paste buffer | Built-in, select from list |
+
+**Inside Copy Mode:**
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `v` | Begin selection | Visual mode |
+| `V` | Begin line selection | Visual line mode |
+| `Ctrl+v` | Rectangle selection | Visual block mode |
+| `y` | Copy to clipboard | Uses pbcopy (macOS) |
+| `Escape` | Exit copy mode | Cancel |
+| `/` | Search forward | Vi search |
+| `?` | Search backward | Vi search |
+| `n` | Next search match | Vi navigation |
+| `N` | Previous search match | Vi navigation |
+| `h/j/k/l` | Navigate | Vi movement |
+| `w/b` | Word forward/back | Vi word movement |
+| `0/$` | Start/end of line | Vi line movement |
+| `g/G` | Top/bottom | Vi buffer movement |
+| `Ctrl+d/u` | Half page down/up | Vi scrolling |
+| `Ctrl+f/b` | Full page down/up | Vi scrolling |
+
+---
+
+### Tool Integration
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `g` | Lazygit popup | 90% screen, git TUI |
+| `prefix` then `G` | Tig popup | 90% screen, git log viewer |
+| `prefix` then `C-g` | Git status split | Opens in new pane |
+| `prefix` then `k` | K9s popup | 95% screen, Kubernetes TUI |
+| `prefix` then `K` | Kubectl context switch | FZF picker for contexts |
+| `prefix` then `Tab` | Extrakto | Fuzzy text extraction plugin |
+| `prefix` then `u` | URL/file picker | tmux-open plugin, select with Enter |
+| `prefix` then `o` | Open file/URL | tmux-open plugin |
+
+---
+
+### Session Persistence (tmux-resurrect/continuum)
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `C-s` | Save session | Manual save |
+| `prefix` then `C-r` | Restore session | Manual restore |
+| Auto-save | Every 15 minutes | tmux-continuum automatic |
+| Auto-restore | On tmux start | tmux-continuum automatic |
+
+---
+
+### Plugin Management (TPM)
+
+| Shortcut | Action | Notes |
+|----------|--------|-------|
+| `prefix` then `I` | Install plugins | Uppercase I, installs new plugins |
+| `prefix` then `U` | Update plugins | Uppercase U, updates all |
+| `prefix` then `Alt+u` | Uninstall plugins | Removes plugins not in config |
+
+---
+
+### Mouse Support (No Prefix Required)
+
+| Action | Behavior |
+|--------|----------|
+| Click pane | Select and focus pane |
+| Click status bar window | Switch to that window |
+| Drag pane border | Resize pane |
+| Scroll wheel | Scroll history (enters copy mode) |
+| Drag in copy mode | Select text |
+| Double-click word | Select word and copy |
+| Triple-click line | Select line and copy |
+
+---
+
 ## Quick Reference Card
 
 **Prefix:** `Ctrl+a`
 
 ```
-┌─────────────────────────────────────────────────────┐
-│ Configuration                                       │
-├─────────────────────────────────────────────────────┤
-│ prefix + r        Reload config                     │
-│ prefix + e        Edit config                       │
-├─────────────────────────────────────────────────────┤
-│ Windows                                             │
-├─────────────────────────────────────────────────────┤
-│ prefix + c        New window                        │
-│ prefix + C-h/C-l  Previous/Next window              │
-│ prefix + </       Move window left/right            │
-│ prefix + x/X      Kill pane/window                  │
-├─────────────────────────────────────────────────────┤
-│ Panes                                               │
-├─────────────────────────────────────────────────────┤
-│ prefix + |/-      Split horizontal/vertical         │
-│ prefix + h/j/k/l  Resize pane                       │
-│ prefix + m        Zoom pane                         │
-│ prefix + b        Break pane to window              │
-│ prefix + S        Sync panes                        │
-├─────────────────────────────────────────────────────┤
-│ Sessions                                            │
-├─────────────────────────────────────────────────────┤
-│ prefix + s        FZF session picker                │
-│ prefix + Space    Last session                      │
-│ prefix + N        New session                       │
-├─────────────────────────────────────────────────────┤
-│ Tools                                               │
-├─────────────────────────────────────────────────────┤
-│ prefix + g/G      Lazygit/Tig popup                 │
-│ prefix + k/K      K9s/Context switch                │
-│ prefix + Tab      Text extraction                   │
-└─────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ TMUX SHORTCUTS CHEAT SHEET                                   │
+├──────────────────────────────────────────────────────────────┤
+│ ESSENTIAL                                                    │
+│  Ctrl+a ?      Help - list all keybindings                   │
+│  Ctrl+a r      Reload configuration                          │
+│  Ctrl+a e      Edit config in nvim                           │
+│  Ctrl+a d      Detach from session                           │
+├──────────────────────────────────────────────────────────────┤
+│ WINDOWS                                                      │
+│  Ctrl+a c      Create new window                             │
+│  Ctrl+a C-h    Previous window                              │
+│  Ctrl+a C-l    Next window                                  │
+│  Ctrl+a <      Move window left                              │
+│  Ctrl+a >      Move window right                             │
+│  Ctrl+a ,      Rename window                                 │
+│  Ctrl+a w      Choose from window list                       │
+│  Ctrl+a x      Kill pane (no confirm)                        │
+│  Ctrl+a X      Kill window (no confirm)                      │
+├──────────────────────────────────────────────────────────────┤
+│ PANES                                                        │
+│  Ctrl+a |      Split horizontal (left/right)                 │
+│  Ctrl+a -      Split vertical (top/bottom)                   │
+│  Ctrl+h/j/k/l  Navigate panes (NO PREFIX!)                   │
+│  Ctrl+a h/j/k/l Resize pane (5 lines, repeatable)           │
+│  Ctrl+a H/J/K/L Fine resize (2 lines, repeatable)           │
+│  Ctrl+a m      Maximize/zoom pane                            │
+│  Ctrl+a b      Break pane to new window                      │
+│  Ctrl+a j      Join pane from window (horizontal)            │
+│  Ctrl+a S      Sync all panes (type in all)                 │
+├──────────────────────────────────────────────────────────────┤
+│ SESSIONS                                                     │
+│  Ctrl+a s      FZF session picker (popup)                    │
+│  Ctrl+a Space  Toggle last session                           │
+│  Ctrl+a N      Create new session                            │
+│  Ctrl+a C-j    Session tree view                             │
+│  Ctrl+a D      Detach all other clients                      │
+├──────────────────────────────────────────────────────────────┤
+│ COPY MODE (VI)                                               │
+│  Ctrl+a Enter  Enter copy mode                               │
+│  Ctrl+a /      Search backward (enters copy mode)            │
+│  Ctrl+a P      Paste buffer                                  │
+│  v             Begin selection (in copy mode)                │
+│  y             Copy to clipboard (in copy mode)              │
+│  Ctrl+v        Rectangle selection (in copy mode)            │
+│  Esc           Exit copy mode                                │
+├──────────────────────────────────────────────────────────────┤
+│ TOOLS & INTEGRATIONS                                         │
+│  Ctrl+a g      Lazygit (popup)                               │
+│  Ctrl+a G      Tig (popup)                                   │
+│  Ctrl+a k      K9s (popup)                                   │
+│  Ctrl+a K      Kubectl context switch (FZF)                  │
+│  Ctrl+a Tab    Extract text (extrakto)                       │
+├──────────────────────────────────────────────────────────────┤
+│ PLUGINS (TPM)                                                │
+│  Ctrl+a I      Install new plugins                           │
+│  Ctrl+a U      Update plugins                                │
+│  Ctrl+a C-s    Save session (resurrect)                      │
+│  Ctrl+a C-r    Restore session (resurrect)                   │
+└──────────────────────────────────────────────────────────────┘
+
+💡 TIP: Most resize/navigation commands are REPEATABLE - hold the
+   key after prefix to repeat without pressing prefix again.
+
+💡 TIP: Use Ctrl+h/j/k/l (NO PREFIX) for seamless vim-tmux navigation
 ```
 
 ## Resources
