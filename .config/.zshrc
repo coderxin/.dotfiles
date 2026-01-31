@@ -15,7 +15,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell"  # Disabled: Using Powerlevel10k instead (loaded below)
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -86,6 +86,17 @@ plugins=(
     rust
 )
 
+# === History Configuration ===
+# MUST be set BEFORE sourcing oh-my-zsh to work properly
+# Per-session history: each terminal session maintains its own history
+# This prevents mixing histories between sessions, making it easier to find commands
+HISTSIZE=10000
+SAVEHIST=10000
+unsetopt share_history
+setopt append_history
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
 source $ZSH/oh-my-zsh.sh
 
 source ~/powerlevel10k/powerlevel10k.zsh-theme
@@ -93,8 +104,14 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-
 source "$HOME/.shell/.exports"
 source "$HOME/.shell/.aliases"
 source "$HOME/.shell/.functions"
 source "$HOME/.shell/.external"
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
