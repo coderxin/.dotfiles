@@ -12,9 +12,6 @@ alias reload='. ~/.zshrc'
 # another way to exit
 alias quit='exit'
 
-# cloack vim
-alias vim="nvim"
-
 # bat styling
 alias bat="\bat --theme=GitHub"
 
