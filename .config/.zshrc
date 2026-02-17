@@ -97,6 +97,18 @@ setopt append_history
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+# Per-tmux-session history: each tmux session gets its own history file
+# Uses a stable @hist_id option so renaming sessions doesn't split history
+if [ -n "$TMUX" ]; then
+  hist_id=$(tmux show-option -qv @hist_id)
+  if [ -z "$hist_id" ]; then
+    hist_id=$(tmux display-message -p '#{session_name}')
+    tmux set-option @hist_id "$hist_id"
+  fi
+  HISTFILE="$HOME/.zsh_history_tmux_${hist_id}"
+  unset hist_id
+fi
+
 source $ZSH/oh-my-zsh.sh
 
 source ~/powerlevel10k/powerlevel10k.zsh-theme
