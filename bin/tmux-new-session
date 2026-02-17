@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Create a new tmux session named after the current directory.
+# Sanitizes the name (replaces . and : with _) and appends a
+# numeric suffix if a session with that name already exists.
+
+dir="${1:-$(pwd)}"
+base=$(basename "$dir" | tr '.:'  '__')
+
+name="$base"
+i=2
+while tmux has-session -t "=$name" 2>/dev/null; do
+  name="${base}-${i}"
+  i=$((i + 1))
+done
+
+tmux new-session -d -s "$name" -c "$dir" && tmux switch-client -t "$name"

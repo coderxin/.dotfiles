@@ -12,3 +12,4 @@
     ~/.bin/git-summary: bin/git-summary
     ~/.bin/git-commits-since: bin/git-commits-since
     ~/.bin/transliterate: bin/transliterate
+    ~/.bin/tmux-new-session: bin/tmux-new-session
