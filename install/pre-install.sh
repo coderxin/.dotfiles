@@ -22,6 +22,15 @@ else
   env ZSH=$ZSH /bin/sh $ZSH/tools/upgrade.sh
 fi
 
+# Install TPM (Tmux Plugin Manager)
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+if [ ! -d "$TPM_DIR" ]; then
+  echo '-- Installing TPM (Tmux Plugin Manager)'
+  git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+else
+  echo '-- TPM already installed'
+fi
+
 # Change default shell
 if [ "/bin/zsh" != $(dscl . -read ~/ UserShell | sed 's/UserShell: //') ]; then
   echo '-- Changing default shell to zsh'
