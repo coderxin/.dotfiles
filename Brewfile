@@ -1,4 +1,5 @@
 tap "homebrew/services"
+tap "PeonPing/tap"
 
 brew "coreutils"
 brew "jq"
@@ -31,3 +32,6 @@ brew "warrensbox/tap/tfswitch"
 brew "hashicorp/tap/terraform-ls"
 brew "eslint"
 brew "sesh"
+brew "btop"
+brew "lazydocker"
+brew "peon-ping"

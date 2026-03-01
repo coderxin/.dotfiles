@@ -35,3 +35,9 @@ run_dotbot 'install/terminal.yml' || true
 run_dotbot 'install/bin.yml' || true
 run_dotbot 'install/brew.yml' || true
 run_dotbot 'install/vscode.yml' || true
+
+# Post-install: set up peon-ping hooks for Claude Code (and other supported IDEs)
+if command -v peon-ping-setup &>/dev/null; then
+  echo '-- Setting up peon-ping hooks'
+  peon-ping-setup
+fi
