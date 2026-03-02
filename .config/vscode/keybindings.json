@@ -1,0 +1,17 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "shift+cmd+/",
+        "command": "workbench.action.terminal.openNativeConsole",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "shift+cmd+c",
+        "command": "-workbench.action.terminal.openNativeConsole",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "shift+cmd+'",
+        "command": "workbench.view.extension.codexViewContainer"
+    }
+]

@@ -1,0 +1,242 @@
+{
+    // ═══════════════════════════════════════════════════════════
+    // EDITOR CORE
+    // ═══════════════════════════════════════════════════════════
+    "editor.fontSize": 14,
+    "editor.fontFamily": "JetBrains Mono, 'JetBrains Mono NL', Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "editor.lineHeight": 1.6,
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.smoothScrolling": true,
+    "editor.renderWhitespace": "boundary",
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "editor.linkedEditing": true,
+    "editor.stickyScroll.enabled": true,
+    "editor.minimap.enabled": false,
+    "editor.accessibilitySupport": "off",
+    "editor.semanticHighlighting.enabled": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // FORMATTING & SAVE
+    // ═══════════════════════════════════════════════════════════
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": null,
+    "files.autoSave": "onFocusChange",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // RUBY
+    // ═══════════════════════════════════════════════════════════
+    "[ruby]": {
+        "editor.defaultFormatter": "Shopify.ruby-lsp",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.semanticHighlighting.enabled": true,
+        "editor.formatOnType": true
+    },
+    "rubyLsp.formatter": "auto",
+    "rubyLsp.linters": ["rubocop"],
+    "rubyLsp.enabledFeatures": {
+        "codeActions": true,
+        "codeLens": true,
+        "completion": true,
+        "definition": true,
+        "diagnostics": true,
+        "documentHighlights": true,
+        "documentLink": true,
+        "documentSymbols": true,
+        "foldingRanges": true,
+        "formatting": true,
+        "hover": true,
+        "inlayHint": true,
+        "onTypeFormatting": true,
+        "references": true,
+        "rename": true,
+        "selectionRanges": true,
+        "semanticHighlighting": true,
+        "signatureHelp": true,
+        "typeHierarchy": true,
+        "workspaceSymbol": true
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // TYPESCRIPT / JAVASCRIPT
+    // ═══════════════════════════════════════════════════════════
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.tabSize": 2
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.tabSize": 2
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.tabSize": 2
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.suggest.autoImports": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+
+    // ═══════════════════════════════════════════════════════════
+    // GO
+    // ═══════════════════════════════════════════════════════════
+    "[go]": {
+        "editor.defaultFormatter": "golang.go",
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false
+    },
+    "go.lintTool": "golangci-lint",
+    "go.lintOnSave": "package",
+    "go.formatTool": "goimports",
+    "go.useLanguageServer": true,
+    "gopls": {
+        "ui.semanticTokens": true,
+        "ui.completion.usePlaceholders": true
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // RUST
+    // ═══════════════════════════════════════════════════════════
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        "editor.tabSize": 4
+    },
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.inlayHints.parameterHints.enable": true,
+    "rust-analyzer.inlayHints.typeHints.enable": true,
+    "rust-analyzer.inlayHints.chainingHints.enable": true,
+
+    // ═══════════════════════════════════════════════════════════
+    // PYTHON
+    // ═══════════════════════════════════════════════════════════
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.tabSize": 4
+    },
+    "python.defaultInterpreterPath": "/usr/local/bin/python3.11",
+
+    // ═══════════════════════════════════════════════════════════
+    // TERMINAL
+    // ═══════════════════════════════════════════════════════════
+    "terminal.integrated.fontSize": 13,
+    "terminal.integrated.fontFamily": "JetBrains Mono",
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.scrollback": 10000,
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+
+    // ═══════════════════════════════════════════════════════════
+    // GIT
+    // ═══════════════════════════════════════════════════════════
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "gitlens.codeLens.enabled": false,
+    "gitlens.currentLine.enabled": true,
+    "gitlens.hovers.currentLine.over": "line",
+
+    // ═══════════════════════════════════════════════════════════
+    // UI & THEME
+    // ═══════════════════════════════════════════════════════════
+    "workbench.colorTheme": "Abyss",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.tree.indent": 16,
+    "workbench.startupEditor": "none",
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.tabCloseButton": "right",
+
+    // ═══════════════════════════════════════════════════════════
+    // EXPLORER & FILES
+    // ═══════════════════════════════════════════════════════════
+    "explorer.confirmDragAndDrop": false,
+    "explorer.confirmDelete": false,
+    "explorer.compactFolders": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/tmp": true,
+        "**/.bundle": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/coverage": true,
+        "**/dist": true,
+        "**/tmp": true,
+        "**/.bundle": true,
+        "**/log": true
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // VIM
+    // ═══════════════════════════════════════════════════════════
+    "vim.leader": "<space>",
+    "vim.useSystemClipboard": true,
+    "vim.hlsearch": true,
+    "vim.incsearch": true,
+    "vim.smartcase": true,
+    "vim.easymotion": true,
+    "vim.sneak": true,
+    "vim.handleKeys": {
+        "<C-a>": false,
+        "<C-f>": false,
+        "<C-c>": false,
+        "<C-v>": false,
+        "<C-x>": false,
+        "<C-z>": false
+    },
+    "vim.normalModeKeyBindingsNonRecursive": [
+        { "before": ["<leader>", "w"], "commands": [":w"] },
+        { "before": ["<leader>", "q"], "commands": [":q"] },
+        { "before": ["<leader>", "e"], "commands": ["workbench.view.explorer"] },
+        { "before": ["<leader>", "f"], "commands": ["workbench.action.quickOpen"] },
+        { "before": ["<leader>", "g"], "commands": ["workbench.action.findInFiles"] },
+        { "before": ["<leader>", "b"], "commands": ["workbench.action.showAllEditors"] },
+        { "before": ["<leader>", "p"], "commands": ["workbench.action.showCommands"] },
+        { "before": ["<leader>", "t"], "commands": ["workbench.action.terminal.toggleTerminal"] },
+        { "before": ["<leader>", "r"], "commands": ["editor.action.rename"] },
+        { "before": ["<leader>", "d"], "commands": ["editor.action.revealDefinition"] },
+        { "before": ["<leader>", "h"], "commands": ["editor.action.showHover"] },
+        { "before": ["<leader>", "/"], "commands": ["editor.action.commentLine"] },
+        { "before": ["H"], "commands": [":bprev"] },
+        { "before": ["L"], "commands": [":bnext"] },
+        { "before": ["<C-h>"], "commands": ["workbench.action.navigateLeft"] },
+        { "before": ["<C-l>"], "commands": ["workbench.action.navigateRight"] },
+        { "before": ["<C-j>"], "commands": ["workbench.action.navigateDown"] },
+        { "before": ["<C-k>"], "commands": ["workbench.action.navigateUp"] }
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        { "before": ["<leader>", "/"], "commands": ["editor.action.commentLine"] },
+        { "before": [">"], "commands": ["editor.action.indentLines"] },
+        { "before": ["<"], "commands": ["editor.action.outdentLines"] }
+    ],
+
+    // ═══════════════════════════════════════════════════════════
+    // ERROR LENS
+    // ═══════════════════════════════════════════════════════════
+    "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+    "errorLens.delay": 500,
+
+    // ═══════════════════════════════════════════════════════════
+    // MISC
+    // ═══════════════════════════════════════════════════════════
+    "cSpell.ignoreWords": [],
+    "accessibility.signals.chatEditModifiedFile": { "sound": "off" },
+
+    // Keeping these disabled as you had them
+    "supermaven.enable": { "*": false },
+    "github.copilot.nextEditSuggestions.enabled": false,
+    "chat.disableAIFeatures": true,
+    "workbench.editor.tabActionLocation": "right"
+}

@@ -1,0 +1,26 @@
+---
+
+- defaults:
+    link:
+      relink: true
+      force: true
+    shell:
+      stdout: true
+      stderr: true
+
+- link:
+    ~/Library/Application Support/Code/User/settings.json: .config/vscode/settings.json
+    ~/Library/Application Support/Code/User/keybindings.json: .config/vscode/keybindings.json
+
+- shell:
+  - command: |
+      if command -v code &> /dev/null; then
+        echo "Installing VS Code extensions..."
+        while IFS= read -r extension; do
+          code --install-extension "$extension" --force 2>/dev/null || true
+        done < .config/vscode/extensions.txt
+        echo "VS Code extensions installed."
+      else
+        echo "VS Code CLI not found. Skipping extension installation."
+      fi
+    description: Installing VS Code extensions
