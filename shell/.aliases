@@ -34,11 +34,52 @@ alias gco='git checkout'
 alias gb='git branch'
 alias gs='git status'
 alias gst='git status'
-alias gl='git log --graph "--pretty=format:%C(yellow bold)%h%Creset by %C(red)%an%Creset (%ar)%C(cyan bold)%d%Creset%n%s%n%b" --all'
-alias gll='git log --pretty=oneline --abbrev-commit'
+alias gl='git log --graph --pretty=format:"%C(yellow)%h%Creset %C(cyan)%d%Creset %s %C(dim white)(%cr) %C(blue)<%an>%Creset" --all'
+alias gll='git log --graph --pretty=format:"%C(yellow bold)%h%Creset by %C(red)%an%Creset (%ar)%C(cyan bold)%d%Creset%n%s%n%b" --all'
+alias glog='git log --graph --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)" --all'
 
 # Solution to allow Lazygit to work with Nvim (https://github.com/kdheepak/lazygit.nvim/issues/67#issuecomment-1307774937)
 alias vim="nvim --listen /tmp/nvim-server.pipe"
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias -- -='cd -'
+
+# Better listing (requires eza)
+alias ls='eza --icons'
+alias ll='eza -la --icons --git'
+alias lt='eza --tree --icons --level=2'
+alias llt='eza --tree --icons --level=3 -la'
+
+# Safety nets
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias mkdir='mkdir -p'
+
+# Network
+alias myip='curl -s ifconfig.me'
+alias flushdns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
+alias headers='curl -I'
+
+# System / macOS
+alias update='brew update && brew upgrade'
+alias cleanup='find . -name ".DS_Store" -delete'
+alias lock='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
+alias top='btop'
+
+# Development
+alias py='python3'
+alias pip='pip3'
+alias serve='python3 -m http.server 8000'
+alias json='python3 -m json.tool'
+alias path='echo $PATH | tr ":" "\n"'
+
+# Clipboard
+alias copy='pbcopy'
+alias paste='pbpaste'
 
 # Show local IP
 alias localip="ipconfig getifaddr en0"
