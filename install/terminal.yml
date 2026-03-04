@@ -20,10 +20,10 @@
       path: shell
     ~/.zshrc: .config/.zshrc
     ~/.tmux.conf: .config/.tmux.conf
-    ~/.config/.alacritty.yml: .config/alacritty/alacritty.yml
     ~/.config/nvim/: .config/nvim-setup/
     ~/.config/k9s/hotkey.yml: .config/k9s/hotkey.yml
     ~/Library/Application Support/lazygit/config.yml: .config/lazygit/config.yml
+    ~/.config/btop/btop.conf: .config/btop/btop.conf
     ~/.config/git/ignore:
       create: true
       path: .config/git/ignore
