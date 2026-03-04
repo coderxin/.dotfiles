@@ -7,3 +7,6 @@
 [submodule "dotbot-brewfile"]
 	path = dotbot-brewfile
 	url = https://github.com/sobolevn/dotbot-brewfile
+[submodule "private-skills"]
+	path = private-skills
+	url = git@github.com:coderxin/private-skills.git

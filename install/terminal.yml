@@ -27,3 +27,6 @@
     ~/.config/git/ignore:
       create: true
       path: .config/git/ignore
+    ~/.claude/skills:
+      create: true
+      path: private-skills
