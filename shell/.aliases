@@ -98,3 +98,6 @@ alias muxn='tmuxinator start node'
 alias muxk='tmuxinator start k8s'
 alias muxp='tmuxinator start project'
 alias tp='tmux-project'
+
+# Claude
+alias cly='claude --dangerously-skip-permissions'
