@@ -27,6 +27,9 @@
     ~/.config/git/ignore:
       create: true
       path: .config/git/ignore
+    ~/.config/ghostty/config:
+      create: true
+      path: .config/ghostty/config
     ~/.claude/skills:
       create: true
       path: private-skills

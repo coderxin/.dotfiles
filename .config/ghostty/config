@@ -1,0 +1,37 @@
+# Ghostty Terminal Configuration
+
+# Font Configuration
+font-family = "Hack Nerd Font Mono"
+font-size = 12
+
+# Theme - Tokyo Night
+# theme = tokyo-night
+
+# Window Settings
+window-padding-x = 5
+window-padding-y = 5
+window-decoration = false
+
+# Cursor
+cursor-style = block
+cursor-style-blink = false
+
+# Mouse & URL Handling
+mouse-hide-while-typing = true
+
+# Link/URL handling (Cmd+Click to open)
+# Ghostty handles this automatically, but you can customize:
+macos-option-as-alt = true
+
+# Shell integration
+shell-integration = detect
+
+# Performance
+resize-overlay = never
+
+# Clipboard
+clipboard-trim-trailing-spaces = true
+
+# Keybindings
+# Cmd+Click on URLs opens them automatically (default behavior)
+# keybind = cmd+shift+u=goto_mode:url
