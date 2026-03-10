@@ -79,10 +79,6 @@ export ZSH="$HOME/.oh-my-zsh"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     gitfast
-    bundler
-    rails
-    ruby
-    rake
     rust
 )
 
@@ -121,9 +117,15 @@ source "$HOME/.shell/.aliases"
 source "$HOME/.shell/.functions"
 source "$HOME/.shell/.external"
 
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# bun completions (lazy-loaded — saves ~5s startup)
+if [ -s "$HOME/.bun/_bun" ]; then
+  bun() {
+    unfunction bun
+    source "$HOME/.bun/_bun"
+    bun "$@"
+  }
+fi
