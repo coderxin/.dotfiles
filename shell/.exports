@@ -10,6 +10,7 @@
 export XDG_CONFIG_HOME=$HOME/.config
 
 export HOMEBREW_NO_ANALYTICS=1  # disables statistics that brew collects
+export CLOUDSDK_PYTHON="/usr/local/opt/python@3.12/bin/python3"  # gcloud needs ≤3.12
 
 export EDITOR=$(which nvim)
 

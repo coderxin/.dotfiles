@@ -4,31 +4,43 @@
 #
 # This file is used as a part of `.zshrc`
 
+# Cache directory for tool init scripts (avoids forking on every shell open)
+_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/shell-init"
+[ -d "$_cache_dir" ] || mkdir -p "$_cache_dir"
+
+# Helper: cache an init command's output and source it
+# Usage: _cached_init <name> <command> [args...]
+# Regenerate cache: rm ~/.cache/shell-init/<name>.zsh && reload
+_cached_init() {
+  local name="$1"; shift
+  local cache="$_cache_dir/$name.zsh"
+  if [ ! -f "$cache" ]; then
+    "$@" > "$cache" 2>/dev/null
+  fi
+  source "$cache"
+}
 
 # === fzf ===
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPTS='--height=40% --preview="cat {}" --preview-window=right:60%:wrap'
 
 # === zoxide ===
-eval "$(zoxide init zsh)"
+_cached_init zoxide zoxide init zsh
 
 # === mise (unified version manager - replaces asdf + nvm) ===
-command -v mise &> /dev/null && eval "$(mise activate zsh)"
-
-# === asdf (legacy fallback - migrate tools to mise to remove this) ===
-[ -f /usr/local/opt/asdf/libexec/asdf.sh ] && . /usr/local/opt/asdf/libexec/asdf.sh
+# Using --shims for fast startup (~0s vs ~8s for full activate)
+command -v mise &> /dev/null && _cached_init mise mise activate zsh --shims
 
 # === direnv ===
-command -v direnv &> /dev/null && eval "$(direnv hook zsh)"
+command -v direnv &> /dev/null && _cached_init direnv direnv hook zsh
 
-# === nvm (legacy fallback - migrate to mise to remove this) ===
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"
-[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
-
-# === atuin (enhanced shell history with fuzzy search + optional cross-machine sync) ===
-# Run `atuin register` or `atuin login` to enable sync
-command -v atuin &> /dev/null && eval "$(atuin init zsh --disable-up-arrow)"
+# === atuin (enhanced shell history with fuzzy search) ===
+if command -v atuin &> /dev/null; then
+  export ATUIN_NOBIND=true
+  _cached_init atuin atuin init zsh --disable-up-arrow
+fi
 
 # === kiro ===
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+unset _cache_dir
