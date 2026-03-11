@@ -30,6 +30,9 @@
     ~/.config/ghostty/config:
       create: true
       path: .config/ghostty/config
+    ~/.config/zellij/:
+      create: true
+      path: .config/zellij/
     ~/.claude/skills:
       create: true
       path: private-skills

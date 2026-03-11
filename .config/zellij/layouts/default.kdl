@@ -1,0 +1,65 @@
+// Default layout with zjstatus — matches tmux powerline status bar
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                // ── Format (mirrors tmux: left=session+tabs, right=k8s+cpu+ram+battery+time) ──
+                format_left   "{mode}#[bg=#1c1c1c] {tabs}"
+                format_center ""
+                format_right  "#[bg=#1c1c1c]{command_kube} #[fg=#a9b1d6,bg=#1c1c1c] CPU: {command_cpu} RAM: {command_ram} #[fg=#303030,bg=#1c1c1c]#[fg=#a9b1d6,bg=#303030] {command_batt} #[fg=#7dcfff,bg=#303030]#[fg=#1a1b26,bg=#7dcfff,bold] {datetime} "
+                format_space  "#[bg=#1c1c1c]"
+                format_hide_on_overlength "true"
+                format_precedence "lrc"
+
+                // ── Mode indicator (powerline style) ──
+                mode_normal        "#[fg=#1a1b26,bg=#7dcfff,bold] NORMAL #[fg=#7dcfff,bg=#1c1c1c]"
+                mode_tmux          "#[fg=#1a1b26,bg=#e0af68,bold] PREFIX #[fg=#e0af68,bg=#1c1c1c]"
+                mode_scroll        "#[fg=#1a1b26,bg=#9ece6a,bold] SCROLL #[fg=#9ece6a,bg=#1c1c1c]"
+                mode_enter_search  "#[fg=#1a1b26,bg=#bb9af7,bold] SEARCH #[fg=#bb9af7,bg=#1c1c1c]"
+                mode_search        "#[fg=#1a1b26,bg=#bb9af7,bold] SEARCH #[fg=#bb9af7,bg=#1c1c1c]"
+                mode_rename_tab    "#[fg=#1a1b26,bg=#ff9e64,bold] RENAME #[fg=#ff9e64,bg=#1c1c1c]"
+                mode_rename_pane   "#[fg=#1a1b26,bg=#ff9e64,bold] RENAME #[fg=#ff9e64,bg=#1c1c1c]"
+
+                // ── Tabs (powerline arrows, cyan active — matches tmux exactly) ──
+                tab_normal              "#[fg=#303030,bg=#1c1c1c]#[fg=#a9b1d6,bg=#303030] {index}:{name} #[fg=#303030,bg=#1c1c1c]"
+                tab_normal_fullscreen   "#[fg=#303030,bg=#1c1c1c]#[fg=#a9b1d6,bg=#303030] {index}:{name} [] #[fg=#303030,bg=#1c1c1c]"
+                tab_normal_sync         "#[fg=#303030,bg=#1c1c1c]#[fg=#a9b1d6,bg=#303030] {index}:{name} <> #[fg=#303030,bg=#1c1c1c]"
+                tab_active              "#[fg=#7dcfff,bg=#1c1c1c]#[fg=#1a1b26,bg=#7dcfff,bold] {index}:{name} #[fg=#7dcfff,bg=#1c1c1c]"
+                tab_active_fullscreen   "#[fg=#7dcfff,bg=#1c1c1c]#[fg=#1a1b26,bg=#7dcfff,bold] {index}:{name} [] #[fg=#7dcfff,bg=#1c1c1c]"
+                tab_active_sync         "#[fg=#7dcfff,bg=#1c1c1c]#[fg=#1a1b26,bg=#7dcfff,bold] {index}:{name} <> #[fg=#7dcfff,bg=#1c1c1c]"
+                tab_separator           ""
+
+                // ── Commands (right side segments) ──
+                command_kube_command    "kubectl config current-context 2>/dev/null || echo ''"
+                command_kube_format     "#[fg=#ff9e64,bg=#1c1c1c] ⎈ {stdout}"
+                command_kube_interval   "30"
+                command_kube_rendermode "static"
+
+                command_cpu_command     "zellij-cpu"
+                command_cpu_format      "#[fg=#9ece6a]{stdout}"
+                command_cpu_interval    "5"
+                command_cpu_rendermode  "static"
+
+                command_ram_command     "zellij-ram"
+                command_ram_format      "#[fg=#9ece6a]{stdout}"
+                command_ram_interval    "5"
+                command_ram_rendermode  "static"
+
+                command_batt_command    "pmset -g batt 2>/dev/null | grep -oE '[0-9]+%' | head -1 || echo ''"
+                command_batt_format     "#[fg=#a9b1d6]⚡{stdout}"
+                command_batt_interval   "30"
+                command_batt_rendermode "static"
+
+                // ── Datetime (cyan bg, bold — matches tmux right-end segment) ──
+                datetime          "{format}"
+                datetime_format   "%H:%M %d-%b"
+                datetime_timezone "Europe/Riga"
+            }
+        }
+        children
+    }
+
+    tab name="main" focus=true {
+        pane
+    }
+}

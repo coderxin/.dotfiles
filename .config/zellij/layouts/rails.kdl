@@ -1,0 +1,70 @@
+// Rails project layout — editor + console + server + logs
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                format_left   "{mode}#[bg=#1a1b26] {tabs}"
+                format_center ""
+                format_right  "#[bg=#1a1b26,fg=#565f89]{command_cpu}  {command_ram}  {datetime}"
+                format_space  "#[bg=#1a1b26]"
+
+                mode_normal  "#[bg=#7aa2f7,fg=#1a1b26,bold] NORMAL "
+                mode_tmux    "#[bg=#e0af68,fg=#1a1b26,bold] PREFIX "
+                mode_scroll  "#[bg=#9ece6a,fg=#1a1b26,bold] SCROLL "
+
+                tab_normal   "#[bg=#1a1b26,fg=#565f89] {index} {name} "
+                tab_active   "#[bg=#7dcfff,fg=#1a1b26,bold] {index} {name} "
+                tab_separator "#[bg=#1a1b26] "
+
+                command_cpu_command    "zellij-cpu"
+                command_cpu_format     "#[fg=#e0af68]CPU {stdout}"
+                command_cpu_interval   "5"
+                command_cpu_rendermode "static"
+
+                command_ram_command    "zellij-ram"
+                command_ram_format     "#[fg=#9ece6a]RAM {stdout}"
+                command_ram_interval   "5"
+                command_ram_rendermode "static"
+
+                datetime        "#[bg=#1a1b26,fg=#c0caf5] {format} "
+                datetime_format "%H:%M"
+                datetime_timezone "Europe/Riga"
+            }
+        }
+        children
+    }
+
+    tab name="editor" focus=true {
+        pane split_direction="vertical" {
+            pane command="nvim" size="60%" name="editor"
+            pane split_direction="horizontal" {
+                pane name="terminal"
+                pane command="rails" {
+                    args "console"
+                    name "console"
+                }
+            }
+        }
+    }
+
+    tab name="server" {
+        pane split_direction="horizontal" {
+            pane command="rails" {
+                args "server"
+                name "rails-server"
+            }
+            pane command="tail" {
+                args "-f" "log/development.log"
+                name "logs"
+            }
+        }
+    }
+
+    tab name="git" {
+        pane command="lazygit"
+    }
+
+    tab name="tests" {
+        pane name="test-runner"
+    }
+}

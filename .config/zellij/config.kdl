@@ -1,0 +1,224 @@
+// Zellij Configuration — mirrors tmux setup (Ctrl+a prefix)
+// Tokyo Night theme · vi copy mode · mouse enabled
+
+// ── Theme: Tokyo Night ──────────────────────────────────────────────
+themes {
+    tokyo-night {
+        fg "#c0caf5"
+        bg "#1a1b26"
+        black "#15161e"
+        red "#f7768e"
+        green "#9ece6a"
+        yellow "#e0af68"
+        blue "#7aa2f7"
+        magenta "#bb9af7"
+        cyan "#7dcfff"
+        white "#a9b1d6"
+        orange "#ff9e64"
+    }
+}
+
+theme "tokyo-night"
+
+// ── Options ─────────────────────────────────────────────────────────
+default_layout "default"
+default_mode "normal"
+mouse_mode true
+scroll_buffer_size 50000
+copy_on_select true
+scrollback_editor "nvim"
+pane_frames false
+auto_layout true
+session_serialization true
+serialize_pane_viewport true
+scrollback_lines_to_serialize 5000
+default_shell "zsh"
+simplified_ui false
+styled_underlines true
+
+// Mirror tmux: on_force_close "detach"
+on_force_close "detach"
+
+// ── Keybindings ─────────────────────────────────────────────────────
+// Strategy: use "tmux" mode bound to Ctrl+a as prefix key
+// Plus some non-prefixed bindings for pane navigation
+
+keybinds clear-defaults=true {
+
+    // ── Shared: Ctrl+a available from all modes except locked ──
+    shared_except "locked" {
+        bind "Ctrl a" { SwitchToMode "tmux"; }
+    }
+
+    // ── Normal mode: non-prefixed bindings ──
+    normal {
+        // Pane navigation without prefix (vim-style)
+        bind "Ctrl h" { MoveFocus "Left"; }
+        bind "Ctrl j" { MoveFocus "Down"; }
+        bind "Ctrl k" { MoveFocus "Up"; }
+        bind "Ctrl l" { MoveFocus "Right"; }
+    }
+
+    // ── Tmux mode: Ctrl+a prefix, then key ──
+    tmux {
+        // Split panes (same as tmux)
+        bind "|" { NewPane "Right"; SwitchToMode "normal"; }
+        bind "-" { NewPane "Down"; SwitchToMode "normal"; }
+
+        // New tab
+        bind "c" { NewTab; SwitchToMode "normal"; }
+
+        // Close pane / tab
+        bind "x" { CloseFocus; SwitchToMode "normal"; }
+        bind "X" { CloseTab; SwitchToMode "normal"; }
+
+        // Fullscreen (zoom)
+        bind "m" { ToggleFocusFullscreen; SwitchToMode "normal"; }
+        // Floating pane toggle
+        bind "f" { ToggleFloatingPanes; SwitchToMode "normal"; }
+
+        // Tab navigation by number
+        bind "1" { GoToTab 1; SwitchToMode "normal"; }
+        bind "2" { GoToTab 2; SwitchToMode "normal"; }
+        bind "3" { GoToTab 3; SwitchToMode "normal"; }
+        bind "4" { GoToTab 4; SwitchToMode "normal"; }
+        bind "5" { GoToTab 5; SwitchToMode "normal"; }
+        bind "6" { GoToTab 6; SwitchToMode "normal"; }
+        bind "7" { GoToTab 7; SwitchToMode "normal"; }
+        bind "8" { GoToTab 8; SwitchToMode "normal"; }
+        bind "9" { GoToTab 9; SwitchToMode "normal"; }
+
+        // Tab cycling
+        bind "h" { GoToPreviousTab; SwitchToMode "normal"; }
+        bind "l" { GoToNextTab; SwitchToMode "normal"; }
+
+        // Pane resize (hold — no SwitchToMode so you can repeat)
+        bind "H" { Resize "Increase Left"; }
+        bind "J" { Resize "Increase Down"; }
+        bind "K" { Resize "Increase Up"; }
+        bind "L" { Resize "Increase Right"; }
+
+        // Session manager
+        bind "s" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "normal";
+        }
+        bind "w" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "normal";
+        }
+
+        // Scroll mode (vi keys)
+        bind "Enter" { SwitchToMode "scroll"; }
+        bind "[" { SwitchToMode "scroll"; }
+
+        // Search
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
+
+        // Detach
+        bind "d" { Detach; }
+
+        // Rename tab
+        bind "," { SwitchToMode "renametab"; TabNameInput 0; }
+
+        // Rename pane
+        bind "." { SwitchToMode "renamepane"; PaneNameInput 0; }
+
+        // Lazygit in floating pane
+        bind "g" {
+            Run "lazygit" {
+                floating true
+                close_on_exit true
+            };
+            SwitchToMode "normal";
+        }
+
+        // Tig in floating pane
+        bind "G" {
+            Run "tig" {
+                floating true
+                close_on_exit true
+            };
+            SwitchToMode "normal";
+        }
+
+        // K9s in floating pane (Ctrl+a k)
+        bind "k" {
+            Run "k9s" {
+                floating true
+                close_on_exit true
+            };
+            SwitchToMode "normal";
+        }
+
+        // btop in floating pane
+        bind "b" {
+            Run "btop" {
+                floating true
+                close_on_exit true
+            };
+            SwitchToMode "normal";
+        }
+
+        // Edit scrollback in nvim
+        bind "e" { EditScrollback; SwitchToMode "normal"; }
+
+        // Move tab position
+        bind "<" { MoveTab "Left"; }
+        bind ">" { MoveTab "Right"; }
+
+        // Cancel / escape
+        bind "Esc" { SwitchToMode "normal"; }
+        bind "Ctrl a" { Write 1; SwitchToMode "normal"; } // send Ctrl+a to terminal
+    }
+
+    // ── Scroll mode (vi keys) ──
+    scroll {
+        bind "j" { ScrollDown; }
+        bind "k" { ScrollUp; }
+        bind "Ctrl d" { HalfPageScrollDown; }
+        bind "Ctrl u" { HalfPageScrollUp; }
+        bind "Ctrl f" { PageScrollDown; }
+        bind "Ctrl b" { PageScrollUp; }
+        bind "G" { ScrollToBottom; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "normal"; }
+        bind "q" { SwitchToMode "normal"; }
+        bind "Esc" { SwitchToMode "normal"; }
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
+    }
+
+    // ── Search mode ──
+    entersearch {
+        bind "Esc" { SwitchToMode "scroll"; }
+        bind "Enter" { SwitchToMode "search"; }
+    }
+
+    search {
+        bind "n" { Search "down"; }
+        bind "N" { Search "up"; }
+        bind "j" { ScrollDown; }
+        bind "k" { ScrollUp; }
+        bind "Ctrl d" { HalfPageScrollDown; }
+        bind "Ctrl u" { HalfPageScrollUp; }
+        bind "Esc" { SwitchToMode "normal"; }
+        bind "q" { SwitchToMode "normal"; }
+    }
+
+    // ── Rename tab ──
+    renametab {
+        bind "Esc" { UndoRenameTab; SwitchToMode "normal"; }
+        bind "Enter" { SwitchToMode "normal"; }
+    }
+
+    // ── Rename pane ──
+    renamepane {
+        bind "Esc" { UndoRenamePane; SwitchToMode "normal"; }
+        bind "Enter" { SwitchToMode "normal"; }
+    }
+}

@@ -69,3 +69,41 @@ ts() {
         tmux switch-client -t "$session" 2>/dev/null || tmux attach-session -t "$session"
     fi
 }
+
+# Zellij functions
+
+# Launch a named zellij layout
+zellij-layout() {
+    local layout="$1"
+    local session_name="${2:-$(basename $(pwd))}"
+    zellij --layout "$HOME/.config/zellij/layouts/${layout}.kdl" --session "$session_name"
+}
+
+# Smart project starter — detects project type and launches appropriate zellij layout
+zellij-project() {
+    local project_name=${1:-$(basename $(pwd))}
+    local project_path=${2:-$(pwd)}
+
+    cd "$project_path"
+
+    if [ -f "$project_path/Gemfile" ]; then
+        zellij --layout "$HOME/.config/zellij/layouts/rails.kdl" --session "$project_name"
+    elif [ -f "$project_path/Cargo.toml" ]; then
+        zellij --layout "$HOME/.config/zellij/layouts/rust.kdl" --session "$project_name"
+    elif [ -f "$project_path/package.json" ]; then
+        zellij --layout "$HOME/.config/zellij/layouts/node.kdl" --session "$project_name"
+    elif [ -f "$project_path/terraform.tfvars" ] || [ -d "$project_path/k8s" ]; then
+        zellij --layout "$HOME/.config/zellij/layouts/k8s.kdl" --session "$project_name"
+    else
+        zellij --session "$project_name"
+    fi
+}
+
+# FZF-based zellij session picker
+zs() {
+    local session
+    session=$(zellij list-sessions -s 2>/dev/null | fzf --prompt="Zellij session: " --height=40% --reverse)
+    if [ -n "$session" ]; then
+        zellij attach "$session"
+    fi
+}
