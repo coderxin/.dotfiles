@@ -129,3 +129,6 @@ if [ -s "$HOME/.bun/_bun" ]; then
     bun "$@"
   }
 fi
+
+# ARM Homebrew (Apple Silicon) — must be last to ensure it wins over /usr/local/bin
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
