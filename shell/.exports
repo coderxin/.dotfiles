@@ -10,12 +10,8 @@
 export XDG_CONFIG_HOME=$HOME/.config
 
 export HOMEBREW_NO_ANALYTICS=1  # disables statistics that brew collects
-# gcloud needs Python ≤3.12 — prefer ARM Homebrew, fall back to Intel
-if [ -x /opt/homebrew/opt/python@3.12/bin/python3 ]; then
-  export CLOUDSDK_PYTHON="/opt/homebrew/opt/python@3.12/bin/python3"
-else
-  export CLOUDSDK_PYTHON="/usr/local/opt/python@3.12/bin/python3"
-fi
+# gcloud 449 needs Python ≤3.12 — use ARM Homebrew
+export CLOUDSDK_PYTHON="/opt/homebrew/opt/python@3.12/bin/python3.12"
 
 export EDITOR=$(which nvim)
 
