@@ -1,4 +1,3 @@
-tap "homebrew/services"
 tap "PeonPing/tap"
 
 brew "coreutils"

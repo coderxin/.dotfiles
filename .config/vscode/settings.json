@@ -124,7 +124,7 @@
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.tabSize": 4
     },
-    "python.defaultInterpreterPath": "/usr/local/bin/python3.11",
+    "python.defaultInterpreterPath": "python3",
 
     // ═══════════════════════════════════════════════════════════
     // TERMINAL

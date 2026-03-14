@@ -10,20 +10,33 @@
 export XDG_CONFIG_HOME=$HOME/.config
 
 export HOMEBREW_NO_ANALYTICS=1  # disables statistics that brew collects
-export CLOUDSDK_PYTHON="/usr/local/opt/python@3.12/bin/python3"  # gcloud needs ≤3.12
+# gcloud needs Python ≤3.12 — prefer ARM Homebrew, fall back to Intel
+if [ -x /opt/homebrew/opt/python@3.12/bin/python3 ]; then
+  export CLOUDSDK_PYTHON="/opt/homebrew/opt/python@3.12/bin/python3"
+else
+  export CLOUDSDK_PYTHON="/usr/local/opt/python@3.12/bin/python3"
+fi
 
 export EDITOR=$(which nvim)
 
 # === Path modifications ===
 
-PATH="/usr/local/sbin:$PATH"
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"  # pipx
 PATH="$HOME/.cargo/bin:$PATH"  # Rust
 PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"  # Solana
 PATH="/Library/TeX/texbin:$PATH"  # TeX
 PATH="$HOME/.opencode/bin:$PATH"  # opencode
-PATH="/usr/local/opt/mysql@8.4/bin:$PATH"  # MySQL 8.4
-PATH="/usr/local/opt/php/bin:$PATH"  # PHP
+
+# Homebrew-installed tools — prefer ARM, fall back to Intel
+if [ -d /opt/homebrew ]; then
+  PATH="/opt/homebrew/opt/mysql@8.4/bin:$PATH"  # MySQL 8.4
+  PATH="/opt/homebrew/opt/php/bin:$PATH"  # PHP
+  PATH="/opt/homebrew/sbin:$PATH"
+else
+  PATH="/usr/local/opt/mysql@8.4/bin:$PATH"  # MySQL 8.4
+  PATH="/usr/local/opt/php/bin:$PATH"  # PHP
+  PATH="/usr/local/sbin:$PATH"
+fi
 
 export PATH
