@@ -33,6 +33,13 @@
     ~/.config/zellij/:
       create: true
       path: .config/zellij/
+    ~/.config/bat/themes/:
+      create: true
+      path: .config/bat/themes/
     ~/.claude/skills:
       create: true
       path: private-skills
+
+- shell:
+  - command: bat cache --build
+    description: Rebuilding bat theme cache
