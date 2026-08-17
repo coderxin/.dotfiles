@@ -1,37 +1,38 @@
-# Ghostty Terminal Configuration
+# Ghostty terminal configuration
 
-# Font Configuration
+# Typography
 font-family = "Hack Nerd Font Mono"
-font-size = 12
+font-size = 14
+font-thicken = true
+adjust-cell-height = 2
 
-# Theme - Tokyo Night
-# theme = tokyo-night
+# Theme and window
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+background-opacity = 0.9
+background-blur-radius = 20
+window-padding-x = 10
+window-padding-y = 8
+window-save-state = always
 
-# Window Settings
-window-padding-x = 5
-window-padding-y = 5
-window-decoration = false
-
-# Cursor
-cursor-style = block
-cursor-style-blink = false
-
-# Mouse & URL Handling
+# Cursor and mouse
+cursor-style = bar
+cursor-style-blink = true
+cursor-opacity = 0.8
 mouse-hide-while-typing = true
-
-# Link/URL handling (Cmd+Click to open)
-# Ghostty handles this automatically, but you can customize:
+copy-on-select = clipboard
 macos-option-as-alt = true
 
-# Shell integration
-shell-integration = detect
+# Quick terminal
+quick-terminal-screen = mouse
+quick-terminal-animation-duration = 0.15
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
+# Navigation
+keybind = cmd+shift+left=previous_tab
+keybind = cmd+shift+right=next_tab
+keybind = cmd+shift+e=equalize_splits
+keybind = cmd+shift+f=toggle_split_zoom
 
 # Performance
 resize-overlay = never
-
-# Clipboard
-clipboard-trim-trailing-spaces = true
-
-# Keybindings
-# Cmd+Click on URLs opens them automatically (default behavior)
-# keybind = cmd+shift+u=goto_mode:url
+scrollback-limit = 25000000
