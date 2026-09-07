@@ -83,6 +83,8 @@ output="$(
 )"
 run="$(printf '%s\n' "$output" | awk '/^run: / { print $2 }')"
 [[ -n "$run" ]]
+grep -Fq 'new-session -d -P' "$test_root/tmux.log"
+grep -Fq 'new-window -d -P' "$test_root/tmux.log"
 grep -q 'Title: Test issue' "$state_root/$run/prompts/issue-12.txt"
 grep -q '<github_issue>' "$state_root/$run/prompts/issue-12.txt"
 
@@ -118,6 +120,8 @@ CODEX_TEST_LOG="$test_root/codex.log" "$script" worker "$prompt" "$test_root/bin
 grep -Fxq -- '--yolo Initial prompt' "$test_root/codex.log"
 
 touch "$test_root/closed"
+closed_status="$(PATH="$test_root/bin:$PATH" TMUX_TEST_STATE="$test_root" CODEX_ISSUES_STATE_ROOT="$state_root" "$script" status "$run")"
+grep -Eq '#12[[:space:]]+closed' <<< "$closed_status"
 touch "$test_root/worktrees/$run/issue-12/uncommitted.txt"
 if PATH="$test_root/bin:$PATH" TMUX_TEST_STATE="$test_root" CODEX_ISSUES_STATE_ROOT="$state_root" \
   "$script" cleanup "$run" >/dev/null 2>&1; then
@@ -132,5 +136,21 @@ git -C "$test_root/repo" show-ref --verify --quiet "refs/heads/codex/issue-12-${
   printf 'issue branch was not retained\n' >&2
   exit 1
 }
+
+rm "$test_root/closed"
+inside_output="$(
+  cd "$test_root/repo"
+  TMUX=fake PATH="$test_root/bin:$PATH" \
+    TMUX_TEST_STATE="$test_root" \
+    CODEX_ISSUES_STATE_ROOT="$state_root" \
+    CODEX_ISSUES_WORKTREE_ROOT="$test_root/worktrees" \
+    "$script" start 56
+)"
+inside_run="$(printf '%s\n' "$inside_output" | awk '/^run: / { print $2 }')"
+[[ -n "$inside_run" ]]
+grep -Fq 'new-window -d -P' "$test_root/tmux.log"
+touch "$test_root/closed"
+PATH="$test_root/bin:$PATH" TMUX_TEST_STATE="$test_root" CODEX_ISSUES_STATE_ROOT="$state_root" \
+  "$script" cleanup "$inside_run" >/dev/null
 
 printf 'codex-issues smoke test passed\n'
