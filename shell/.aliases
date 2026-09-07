@@ -115,3 +115,6 @@ alias zjp='zellij-project'
 
 # Claude
 alias cly='claude --dangerously-skip-permissions'
+
+# Codex
+alias yolo='codex --yolo'
