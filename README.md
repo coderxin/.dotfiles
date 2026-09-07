@@ -61,3 +61,22 @@ ts
 - Terraform with version management (tfswitch)
 - asdf for language version management
 
+### Parallel Codex issue workers
+
+`codex-issues` launches each GitHub issue in a fresh `codex --yolo` process,
+isolated Git worktree, branch, and tmux window. It requires `codex`, `gh`,
+`git`, `jq`, and `tmux`, and must be run from the target repository.
+
+```bash
+codex-issues start 123 456                # issue numbers or GitHub issue URLs
+codex-issues list                         # find the generated run name
+codex-issues status <run>                 # process and worktree status
+codex-issues show <run> 123               # recent terminal output
+codex-issues attach <run> 123             # open the worker's tmux window
+codex-issues send <run> 123 "Pause work"  # intervene in the live session
+codex-issues cleanup <run>                 # remove clean, stopped worktrees
+```
+
+When started inside tmux, workers become windows in the current session.
+Otherwise, the command creates a detached session and prints how to attach.
+Cleanup refuses to remove running or dirty worktrees and retains issue branches.

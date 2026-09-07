@@ -1,0 +1,286 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STATE_ROOT="${CODEX_ISSUES_STATE_ROOT:-${XDG_STATE_HOME:-$HOME/.local/state}/codex-issues}"
+WORKTREE_ROOT="${CODEX_ISSUES_WORKTREE_ROOT:-}"
+SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/$(basename "${BASH_SOURCE[0]}")"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  codex-issues start <issue-number-or-url>...
+  codex-issues list
+  codex-issues status <run>
+  codex-issues show <run> <issue>
+  codex-issues attach <run> [issue]
+  codex-issues send <run> <issue> <message...>
+  codex-issues cleanup <run>
+
+Each issue starts in a fresh `codex --yolo` process, isolated Git worktree,
+branch, and tmux window. Run this inside tmux to add windows to the current
+session; outside tmux, a new detached session is created.
+EOF
+}
+
+die() {
+  printf 'codex-issues: %s\n' "$*" >&2
+  exit 1
+}
+
+require_cmd() {
+  command -v "$1" >/dev/null 2>&1 || die "missing required command: $1"
+}
+
+run_dir() {
+  [[ "$1" =~ ^[A-Za-z0-9._-]+$ ]] || die "invalid run name: $1"
+  printf '%s/%s\n' "$STATE_ROOT" "$1"
+}
+
+load_run() {
+  require_cmd tmux
+  RUN_DIR="$(run_dir "$1")"
+  [[ -f "$RUN_DIR/meta" && -f "$RUN_DIR/workers.tsv" ]] || die "unknown run: $1"
+  IFS=$'\t' read -r SESSION REPO_ROOT WORKTREE_PARENT < "$RUN_DIR/meta"
+  [[ -n "$SESSION" && -d "$REPO_ROOT" ]] || die "invalid run metadata: $1"
+}
+
+worker_row() {
+  local issue="$1"
+  awk -F '\t' -v issue="$issue" '$1 == issue { print; found=1; exit } END { exit !found }' "$RUN_DIR/workers.tsv"
+}
+
+worker() {
+  [[ $# -eq 2 && -f "$1" && -x "$2" ]] || die "worker requires a prompt file and Codex executable"
+  exec "$2" --yolo "$(<"$1")"
+}
+
+start() {
+  [[ $# -gt 0 ]] || die "start requires at least one issue"
+  require_cmd codex
+  require_cmd gh
+  require_cmd git
+  require_cmd jq
+  require_cmd tmux
+
+  local repo_root repo_slug default_branch base_ref repo_name stamp run run_path session owns_session codex_bin
+  codex_bin="$(command -v codex)"
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || die "run start inside a Git repository"
+  repo_root="$(cd "$repo_root" && pwd -P)"
+  repo_slug="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
+  default_branch="$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)"
+  git fetch origin "$default_branch"
+  base_ref="origin/$default_branch"
+  repo_name="$(printf '%s' "$(basename "$repo_root")" | tr -cs 'A-Za-z0-9._-' '-')"
+  stamp="$(date +%Y%m%d-%H%M%S)"
+  run="${repo_name}-${stamp}-$$"
+  run_path="$(run_dir "$run")"
+
+  if [[ -n "${TMUX:-}" ]]; then
+    session="$(tmux display-message -p '#S')"
+    owns_session=0
+  else
+    session="cx-${repo_name}-${stamp}-$$"
+    owns_session=1
+  fi
+
+  local worktree_parent
+  worktree_parent="${WORKTREE_ROOT:-$(dirname "$repo_root")/.codex-issue-worktrees}/$run"
+  mkdir -p "$run_path/prompts" "$worktree_parent"
+  printf '%s\t%s\t%s\n' "$session" "$repo_root" "$worktree_parent" > "$run_path/meta"
+  : > "$run_path/workers.tsv"
+  printf 'run: %s\n' "$run"
+
+  local issue_ref issue_json issue title body url branch worktree prompt window launch ids window_id pane_id
+  local first_window=1
+  for issue_ref in "$@"; do
+    case "$issue_ref" in
+      https://github.com/*)
+        [[ "$issue_ref" == "https://github.com/$repo_slug/issues/"* ]] || die "issue is not from $repo_slug: $issue_ref"
+        ;;
+      *[!0-9]*|'') die "issue must be a number or GitHub issue URL: $issue_ref" ;;
+    esac
+
+    issue_json="$run_path/prompts/issue.json"
+    gh issue view "$issue_ref" --repo "$repo_slug" --json number,title,body,url > "$issue_json"
+    issue="$(jq -r .number "$issue_json")"
+    worker_row_exists=0
+    if awk -F '\t' -v issue="$issue" '$1 == issue { found=1 } END { exit !found }' "$run_path/workers.tsv"; then
+      worker_row_exists=1
+    fi
+    [[ "$worker_row_exists" -eq 0 ]] || die "duplicate issue: $issue"
+
+    title="$(jq -r .title "$issue_json")"
+    body="$(jq -r '.body // ""' "$issue_json")"
+    url="$(jq -r .url "$issue_json")"
+    rm "$issue_json"
+
+    branch="codex/issue-${issue}-${stamp}-$$"
+    worktree="$worktree_parent/issue-$issue"
+    prompt="$run_path/prompts/issue-$issue.txt"
+    window="gh-$issue"
+
+    git worktree add -b "$branch" "$worktree" "$base_ref"
+    if ! {
+      printf 'Work on GitHub issue #%s in this isolated worktree and branch.\n\n' "$issue"
+      printf 'Issue: %s\nTitle: %s\n\n<github_issue>\n%s\n</github_issue>\n\n' "$url" "$title" "$body"
+      printf 'Treat the issue as the task source of truth. Follow all applicable AGENTS.md instructions. '
+      printf 'Own the issue end to end, verify the result, and do not work on unrelated issues. '
+      printf 'If blocked or a decision is required, explain it in this session and wait for intervention.\n'
+    } > "$prompt"; then
+      git worktree remove "$worktree"
+      die "could not create prompt for issue #$issue"
+    fi
+
+    printf -v launch '%q worker %q %q' "$SCRIPT_PATH" "$prompt" "$codex_bin"
+    if [[ "$owns_session" -eq 1 && "$first_window" -eq 1 ]]; then
+      if ! ids="$(tmux new-session -d -P -F $'#{window_id}\t#{pane_id}' -s "$session" -n "$window" -c "$worktree" "$launch")"; then
+        git worktree remove "$worktree"
+        rm "$prompt"
+        die "could not create tmux session for issue #$issue"
+      fi
+      first_window=0
+    else
+      if ! ids="$(tmux new-window -d -P -F $'#{window_id}\t#{pane_id}' -t "$session:" -n "$window" -c "$worktree" "$launch")"; then
+        git worktree remove "$worktree"
+        rm "$prompt"
+        die "could not create tmux window for issue #$issue"
+      fi
+    fi
+    IFS=$'\t' read -r window_id pane_id <<< "$ids"
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$issue" "$window_id" "$pane_id" "$worktree" "$branch" "$url" >> "$run_path/workers.tsv"
+    printf 'started #%s in %s (%s)\n' "$issue" "$window" "$worktree"
+  done
+
+  printf '\nmonitor: codex-issues status %s\nattach: codex-issues attach %s\n' "$run" "$run"
+}
+
+list_runs() {
+  [[ -d "$STATE_ROOT" ]] || return 0
+  local path run session repo
+  for path in "$STATE_ROOT"/*; do
+    [[ -f "$path/meta" ]] || continue
+    run="$(basename "$path")"
+    IFS=$'\t' read -r session repo _ < "$path/meta"
+    printf '%-42s  %-24s  %s\n' "$run" "$session" "$repo"
+  done
+}
+
+status_run() {
+  local issue window_id pane_id worktree branch url process changes state
+  printf '%-8s  %-10s  %-12s  %-7s  %s\n' ISSUE STATE PROCESS CHANGES WORKTREE
+  while IFS=$'\t' read -r issue window_id pane_id worktree branch url; do
+    if process="$(tmux display-message -p -t "$pane_id" '#{pane_current_command}' 2>/dev/null)"; then
+      state="open"
+    else
+      state="closed"
+      process="-"
+    fi
+    if [[ -d "$worktree" ]]; then
+      changes="$(git -C "$worktree" status --porcelain | wc -l | tr -d ' ')"
+    else
+      changes="-"
+    fi
+    printf '#%-7s  %-10s  %-12s  %-7s  %s\n' "$issue" "$state" "$process" "$changes" "$worktree"
+  done < "$RUN_DIR/workers.tsv"
+}
+
+show_worker() {
+  local row issue window_id pane_id worktree branch url
+  row="$(worker_row "$1")" || die "issue not found in run: $1"
+  IFS=$'\t' read -r issue window_id pane_id worktree branch url <<< "$row"
+  tmux capture-pane -p -t "$pane_id" -S -100 2>/dev/null || die "issue #$issue is no longer running"
+}
+
+attach_run() {
+  local row issue window_id pane_id worktree branch url
+  if [[ $# -gt 0 ]]; then
+    row="$(worker_row "$1")" || die "issue not found in run: $1"
+  else
+    row="$(head -n 1 "$RUN_DIR/workers.tsv")"
+  fi
+  IFS=$'\t' read -r issue window_id pane_id worktree branch url <<< "$row"
+  tmux select-window -t "$window_id" 2>/dev/null || die "issue #$issue is no longer running"
+  if [[ -n "${TMUX:-}" ]]; then
+    exec tmux switch-client -t "$SESSION"
+  fi
+  exec tmux attach-session -t "$SESSION"
+}
+
+send_worker() {
+  [[ $# -ge 2 ]] || die "send requires an issue and message"
+  local target_issue="$1" row issue window_id pane_id worktree branch url
+  shift
+  row="$(worker_row "$target_issue")" || die "issue not found in run: $target_issue"
+  IFS=$'\t' read -r issue window_id pane_id worktree branch url <<< "$row"
+  tmux display-message -p -t "$pane_id" '#{pane_id}' >/dev/null 2>&1 || die "issue #$issue is no longer running"
+  tmux send-keys -t "$pane_id" -l -- "$*"
+  tmux send-keys -t "$pane_id" Enter
+  printf 'sent intervention to issue #%s\n' "$issue"
+}
+
+cleanup_run() {
+  local issue window_id pane_id worktree branch url dirty blocked=0
+  while IFS=$'\t' read -r issue window_id pane_id worktree branch url; do
+    if tmux display-message -p -t "$pane_id" '#{pane_id}' >/dev/null 2>&1; then
+      printf 'codex-issues: issue #%s is still running; exit its Codex window first\n' "$issue" >&2
+      blocked=1
+    elif [[ -d "$worktree" ]]; then
+      dirty="$(git -C "$worktree" status --porcelain)"
+      if [[ -n "$dirty" ]]; then
+        printf 'codex-issues: preserving dirty worktree for issue #%s: %s\n' "$issue" "$worktree" >&2
+        blocked=1
+      fi
+    fi
+  done < "$RUN_DIR/workers.tsv"
+  [[ "$blocked" -eq 0 ]] || die "cleanup refused; running or dirty workers remain"
+
+  while IFS=$'\t' read -r issue window_id pane_id worktree branch url; do
+    if [[ -d "$worktree" ]]; then
+      git -C "$REPO_ROOT" worktree remove "$worktree"
+    fi
+    rm -f "$RUN_DIR/prompts/issue-$issue.txt"
+  done < "$RUN_DIR/workers.tsv"
+  git -C "$REPO_ROOT" worktree prune
+  rm -f "$RUN_DIR/prompts/issue.json"
+  rmdir "$WORKTREE_PARENT" 2>/dev/null || true
+  rm "$RUN_DIR/workers.tsv" "$RUN_DIR/meta"
+  rmdir "$RUN_DIR/prompts" "$RUN_DIR"
+  printf 'cleaned run %s; issue branches were retained\n' "$(basename "$RUN_DIR")"
+}
+
+command="${1:-}"
+case "$command" in
+  worker)
+    shift
+    worker "$@"
+    ;;
+  start)
+    shift
+    start "$@"
+    ;;
+  list)
+    [[ $# -eq 1 ]] || die "list takes no arguments"
+    list_runs
+    ;;
+  status|show|attach|send|cleanup)
+    shift
+    [[ $# -gt 0 ]] || die "$command requires a run name"
+    run="$1"
+    shift
+    load_run "$run"
+    case "$command" in
+      status) [[ $# -eq 0 ]] || die "status takes only a run name"; status_run ;;
+      show) [[ $# -eq 1 ]] || die "show requires an issue"; show_worker "$1" ;;
+      attach) [[ $# -le 1 ]] || die "attach accepts at most one issue"; attach_run "$@" ;;
+      send) send_worker "$@" ;;
+      cleanup) [[ $# -eq 0 ]] || die "cleanup takes only a run name"; cleanup_run ;;
+    esac
+    ;;
+  -h|--help|help)
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 1
+    ;;
+esac
