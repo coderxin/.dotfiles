@@ -66,7 +66,7 @@ chmod +x "$test_root/bin/gh" "$test_root/bin/codex" "$test_root/bin/tmux"
 git init --bare -q "$test_root/origin.git"
 git init -q -b main "$test_root/repo"
 git -C "$test_root/repo" config user.name Test
-git -C "$test_root/repo" config user.email test@example.com
+git -C "$test_root/repo" config user.email codex-issues-test.invalid
 touch "$test_root/repo/README.md"
 git -C "$test_root/repo" add README.md
 git -C "$test_root/repo" commit -qm init
