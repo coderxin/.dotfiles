@@ -45,9 +45,10 @@ if args[0] == 'queue':
 assert args[0] == '--yolo'
 assert '--dangerously-bypass-hook-trust' not in args
 configs = [tomllib.loads(args[i+1]) for i, arg in enumerate(args) if arg == '-c']
-hooks = {k: v for config in configs for k, v in config['hooks'].items()}
+hooks = {k: v for config in configs for k, v in config.get('hooks', {}).items()}
 assert set(hooks) == {'SessionStart', 'UserPromptSubmit', 'Stop', 'Interrupt'}
 issue = pathlib.Path.cwd().name.removeprefix('issue-')
+(root / ('args-' + issue + '.json')).write_text(json.dumps(args))
 for event in ('SessionStart', 'UserPromptSubmit'):
     command = hooks[event][0]['hooks'][0]['command']
     payload = {'cwd': os.getcwd(), 'session_id': 'thread-' + issue, 'hook_event_name': event}
@@ -80,12 +81,24 @@ wait_for() {
   return 1
 }
 if "$script" status '../bad' >/dev/null 2>&1; then exit 1; fi
-output="$(cd "$TEST_ROOT/repo" && env -u TMUX "$script" start 12 34)"
+output="$(cd "$TEST_ROOT/repo" && env -u TMUX "$script" start \
+  --model gpt-6-astra --effort medium \
+  --subagent-model 'openai/gpt-5.6-"luna"' --subagent-effort low 12 34)"
 run="$(awk '/^run: / { print $2 }' <<< "$output")"
 run_dir="$CODEX_ISSUES_STATE_ROOT/$run"
 pane="$(awk -F '\t' '$1 == 12 {print $3}' "$run_dir/workers.tsv")"
 wait_for test -f "$TEST_ROOT/ready-12"
 wait_for test -f "$TEST_ROOT/ready-34"
+python3 - "$TEST_ROOT/args-12.json" "$TEST_ROOT/args-34.json" <<'PY'
+import json, sys, tomllib
+for path in sys.argv[1:]:
+    args = json.load(open(path))
+    assert args[args.index('--model') + 1] == 'gpt-6-astra'
+    configs = [tomllib.loads(args[i + 1]) for i, arg in enumerate(args) if arg == '-c']
+    assert any(config.get('model_reasoning_effort') == 'medium' for config in configs)
+    assert any(config.get('agents', {}).get('default_subagent_model') == 'openai/gpt-5.6-"luna"' for config in configs)
+    assert any(config.get('agents', {}).get('default_subagent_reasoning_effort') == 'low' for config in configs)
+PY
 "$script" list | grep "$run" >/dev/null
 "$script" status "$run" | grep -E '#12[[:space:]]+working' >/dev/null
 "$script" show "$run" 12 | grep 'Codex chat ready' >/dev/null
@@ -163,8 +176,19 @@ tmux new-session -d -s container 'sleep 60'
 output="$(cd "$TEST_ROOT/repo" && TMUX=fake "$script" start 56)"
 run="$(awk '/^run: / {print $2}' <<< "$output")"
 wait_for test -f "$TEST_ROOT/ready-56"
+python3 - "$TEST_ROOT/args-56.json" <<'PY'
+import json, sys, tomllib
+args = json.load(open(sys.argv[1]))
+assert '--model' not in args
+configs = [tomllib.loads(args[i + 1]) for i, arg in enumerate(args) if arg == '-c']
+assert all('model_reasoning_effort' not in config and 'agents' not in config for config in configs)
+PY
 printf '0\n' > "$TEST_ROOT/exit-56"
 wait_for grep -qx closed "$CODEX_ISSUES_STATE_ROOT/$run/prompts/issue-56.state"
 "$script" cleanup "$run" >/dev/null
 tmux has-session -t container
+if (cd "$TEST_ROOT/repo" && "$script" start --effort enormous 57) >/dev/null 2>&1; then exit 1; fi
+if (cd "$TEST_ROOT/repo" && "$script" start --subagent-effort enormous 57) >/dev/null 2>&1; then exit 1; fi
+if (cd "$TEST_ROOT/repo" && "$script" start --model) >/dev/null 2>&1; then exit 1; fi
+if (cd "$TEST_ROOT/repo" && "$script" start --unknown 57) >/dev/null 2>&1; then exit 1; fi
 printf 'codex-issues integration test passed\n'

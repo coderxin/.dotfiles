@@ -8,7 +8,7 @@ SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/$(basename "${BASH
 usage() {
   cat <<'EOF'
 Usage:
-  codex-issues start <issue-number-or-url>...
+  codex-issues start [options] <issue-number-or-url>...
   codex-issues list
   codex-issues status <run>
   codex-issues show <run> <issue>
@@ -20,6 +20,12 @@ Usage:
 Each issue starts in a fresh `codex --yolo` process, isolated Git worktree,
 branch, and tmux window. Run this inside tmux to add windows to the current
 session; outside tmux, a new detached session is created.
+
+Start options:
+  --model <model>                    Issue-session model
+  --effort <effort>                  Issue-session reasoning effort
+  --subagent-model <model>           Default model for spawned subagents
+  --subagent-effort <effort>         Default effort for spawned subagents
 EOF
 }
 
@@ -128,8 +134,10 @@ hook_args() {
 }
 
 worker() {
-  [[ $# -eq 2 && -f "$1" && -x "$2" ]] || die "worker requires a prompt file and Codex executable"
+  [[ $# -ge 2 && -f "$1" && -x "$2" ]] || die "worker requires a prompt file and Codex executable"
   local prompt="$1" codex_bin="$2" issue pane_id state rc=0
+  shift 2
+  local -a codex_args=("$@")
   RUN_DIR="$(cd "$(dirname "$prompt")/.." && pwd -P)"
   issue="$(basename "$prompt" .txt)"
   issue="${issue#issue-}"
@@ -140,7 +148,7 @@ worker() {
   tmux set-option -w -t "$pane_id" remain-on-exit on
   set_state working
   hook_args
-  "$codex_bin" --yolo "${HOOK_ARGS[@]}" "$(<"$prompt")" || rc=$?
+  "$codex_bin" --yolo "${codex_args[@]}" "${HOOK_ARGS[@]}" "$(<"$prompt")" || rc=$?
   read_state
   if [[ "$rc" -ne 0 ]]; then
     set_state error
@@ -151,15 +159,47 @@ worker() {
 }
 
 start() {
+  local model="" effort="" subagent_model="" subagent_effort="" configured_effort
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --model|--effort|--subagent-model|--subagent-effort)
+        [[ $# -ge 2 && -n "$2" && "$2" != -* ]] || die "$1 requires a value"
+        case "$1" in
+          --model) model="$2" ;;
+          --effort) effort="$2" ;;
+          --subagent-model) subagent_model="$2" ;;
+          --subagent-effort) subagent_effort="$2" ;;
+        esac
+        shift 2
+        ;;
+      --) shift; break ;;
+      -*) die "unknown start option: $1" ;;
+      *) break ;;
+    esac
+  done
   [[ $# -gt 0 ]] || die "start requires at least one issue"
+  for configured_effort in "$effort" "$subagent_effort"; do
+    case "$configured_effort" in
+      ''|none|low|medium|high|xhigh|max) ;;
+      *) die "invalid reasoning effort: $configured_effort" ;;
+    esac
+  done
   require_cmd codex
   require_cmd gh
   require_cmd git
   require_cmd jq
   require_cmd tmux
 
-  local repo_root repo_slug default_branch base_ref repo_name stamp run run_path session owns_session codex_bin
+  local repo_root repo_slug default_branch base_ref repo_name stamp run run_path session owns_session codex_bin encoded
+  local -a codex_args=()
   codex_bin="$(command -v codex)"
+  [[ -z "$model" ]] || codex_args+=(--model "$model")
+  [[ -z "$effort" ]] || codex_args+=(-c "model_reasoning_effort=\"$effort\"")
+  if [[ -n "$subagent_model" ]]; then
+    encoded="$(jq -Rn --arg value "$subagent_model" '$value')"
+    codex_args+=(-c "agents.default_subagent_model=$encoded")
+  fi
+  [[ -z "$subagent_effort" ]] || codex_args+=(-c "agents.default_subagent_reasoning_effort=\"$subagent_effort\"")
   "$codex_bin" queue --help >/dev/null || die "Codex with queue support is required"
   repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || die "run start inside a Git repository"
   repo_root="$(cd "$repo_root" && pwd -P)"
@@ -237,6 +277,9 @@ start() {
     # Register cwd before Codex can emit SessionStart. Fill in tmux IDs below.
     printf '%s\t-\t-\t%s\t%s\t%s\n' "$issue" "$worktree" "$branch" "$url" >> "$run_path/workers.tsv"
     printf -v launch 'env CODEX_ISSUES_STATE_ROOT=%q %q worker %q %q' "$STATE_ROOT" "$SCRIPT_PATH" "$prompt" "$codex_bin"
+    for codex_arg in "${codex_args[@]}"; do
+      printf -v launch '%s %q' "$launch" "$codex_arg"
+    done
     if [[ "$owns_session" -eq 1 && "$first_window" -eq 1 ]]; then
       if ! ids="$(tmux new-session -d -P -F $'#{window_id}\t#{pane_id}' -s "$session" -n "$window" -c "$worktree" "$launch")"; then
         git worktree remove "$worktree"

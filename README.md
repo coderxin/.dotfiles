@@ -69,7 +69,10 @@ isolated Git worktree, branch, and tmux window. It requires `codex`, `gh`,
 support hooks and `codex queue`.
 
 ```bash
-codex-issues start 123 456                # issue numbers or GitHub issue URLs
+codex-issues start 123 456                # inherit normal Codex model settings
+codex-issues start --model gpt-5.6 --effort medium 123
+codex-issues start --model gpt-6-astra --effort medium \
+  --subagent-model gpt-5.6-luna --subagent-effort medium 456
 codex-issues list                         # find the generated run name
 codex-issues status <run>                 # tab state and worktree status
 codex-issues show <run> 123               # recent terminal output
@@ -77,6 +80,12 @@ codex-issues attach <run> 123             # open the worker's tmux window
 codex-issues send <run> 123 "Pause work"  # queue a message in the agent chat
 codex-issues cleanup <run>                 # remove clean, stopped worktrees
 ```
+
+`--model` and `--effort` configure the launched issue sessions.
+`--subagent-model` and `--subagent-effort` set defaults for agents spawned by
+those sessions. The settings apply uniformly to every issue in one `start`
+invocation, so use separate invocations when issues need different settings.
+Omitted options inherit the normal Codex configuration.
 
 When started inside tmux, workers become windows in the current session.
 Otherwise, the command creates a detached session and prints how to attach.
