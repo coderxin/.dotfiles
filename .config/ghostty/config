@@ -21,6 +21,8 @@ cursor-style-blink = true
 cursor-opacity = 0.8
 mouse-hide-while-typing = true
 copy-on-select = clipboard
+# Keep Shift-drag available for native selection, even when tmux captures the mouse.
+mouse-shift-capture = never
 macos-option-as-alt = true
 
 # Quick terminal
