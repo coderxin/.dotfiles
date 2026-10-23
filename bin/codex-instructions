@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Read-only preflight for Codex's file-based instruction chain; no model call."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import tomllib
+
+
+def git(cwd, *args):
+    result = subprocess.run(["git", "-C", str(cwd), *args], capture_output=True)
+    return result.stdout if result.returncode == 0 else None
+
+
+def first_document(directory, names):
+    for name in names:
+        path = directory / name
+        if path.is_file() and path.stat().st_size:
+            return path
+    return None
+
+
+def inspect(cwd, config_home, budget):
+    root_bytes = git(cwd, "rev-parse", "--show-toplevel")
+    root = Path(root_bytes.decode().strip()).resolve() if root_bytes else cwd
+    directories = [root]
+    for part in cwd.relative_to(root).parts:
+        directories.append(directories[-1] / part)
+    config = {}
+    # Inspect only document-discovery settings; never output configuration values.
+    for path in [config_home / "config.toml"] + [d / ".codex/config.toml" for d in directories]:
+        if path.is_file():
+            values = tomllib.loads(path.read_text())
+            for key in ("project_doc_max_bytes", "project_doc_fallback_filenames"):
+                if key in values:
+                    config[key] = values[key]
+    limit = config.get("project_doc_max_bytes", 32768)
+    names = ["AGENTS.override.md", "AGENTS.md"] + config.get("project_doc_fallback_filenames", [])
+    if not isinstance(limit, int) or limit <= 0 or budget <= 0:
+        raise ValueError("instruction byte limits must be positive integers")
+    if any(not isinstance(name, str) or Path(name).name != name for name in names):
+        raise ValueError("instruction fallback names must be filenames")
+    global_doc = first_document(config_home, names[:2])
+    project_docs = [p for d in directories if (p := first_document(d, names))]
+    paths = ([global_doc] if global_doc else []) + project_docs
+    sources = [{"path": str(p), "bytes": p.stat().st_size,
+                "sha256": hashlib.sha256(p.read_bytes()).hexdigest()} for p in paths]
+    total = sum(s["bytes"] for s in sources) + max(0, len(sources) - 1) * 2
+    problems = []
+    if total > min(budget, limit):
+        problems.append("instruction_chain_exceeds_budget")
+    base = git(root, "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
+    base_ref = base.decode().strip() if base else "origin/main"
+    base_sha = git(root, "rev-parse", "--verify", base_ref)
+    revision = git(root, "rev-parse", "HEAD")
+    if base_sha and git(root, "merge-base", "--is-ancestor", base_ref, "HEAD") is None:
+        for path in project_docs:
+            # A local override is intentional; it can bootstrap current policy in
+            # a preserved stale checkout without changing tracked user work.
+            if path.name == "AGENTS.override.md":
+                continue
+            current = git(root, "show", f"{base_ref}:{path.relative_to(root)}")
+            if current is not None and current != path.read_bytes():
+                problems.append("stale_checkout_instructions")
+                break
+    return {"status": "blocked" if problems else "ready", "cwd": str(cwd),
+            "repository": str(root), "revision": revision.decode().strip() if revision else None,
+            "base_revision": base_sha.decode().strip() if base_sha else None,
+            "bytes": total, "budget_bytes": min(budget, limit), "sources": sources,
+            "problems": problems}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--cwd", type=Path, default=Path.cwd())
+    parser.add_argument("--config-home", type=Path,
+                        default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
+    parser.add_argument("--max-bytes", type=int, default=24576,
+                        help="conservative total budget including global guidance (default: 24576)")
+    args = parser.parse_args()
+    try:
+        result = inspect(args.cwd.resolve(strict=True), args.config_home.resolve(), args.max_bytes)
+    except (OSError, ValueError, TypeError) as error:
+        print(json.dumps({"status": "blocked", "error": str(error)}))
+        return 2
+    print(json.dumps(result, indent=2))
+    return 1 if result["problems"] else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
