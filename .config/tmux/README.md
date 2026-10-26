@@ -108,7 +108,10 @@ A comprehensive, production-ready tmux configuration optimized for polyglot deve
 - Drag to resize panes
 - Scroll to navigate history
 - Click status bar windows to switch
-- Drag to select text in copy mode
+- Drag to select text; release to copy to the system clipboard
+- In Ghostty, hold **Shift** while dragging for native terminal selection (automatically copied)
+- Use tmux copy mode for pane-specific selection and older scrollback; `y` copies and exits
+- Paste the system clipboard with **Cmd+V**; `prefix + P` pastes the tmux buffer
 
 ## Session Templates (Tmuxinator)
 
@@ -273,7 +276,6 @@ Managed by [TPM](https://github.com/tmux-plugins/tpm) (Tmux Plugin Manager).
 ### Core Plugins
 - **vim-tmux-navigator** - Seamless navigation between vim and tmux panes
 - **tmux-sensible** - Basic tmux settings everyone can agree on
-- **tmux-yank** - Enhanced clipboard integration
 - **tmux-open** - Open URLs and files from tmux
 - **extrakto** - Fuzzy text extraction with FZF
 
@@ -591,7 +593,7 @@ tmux show-options -g | grep prefix
 | `v` | Begin selection | Visual mode |
 | `V` | Begin line selection | Visual line mode |
 | `Ctrl+v` | Rectangle selection | Visual block mode |
-| `y` | Copy to clipboard | Uses pbcopy (macOS) |
+| `y` | Copy to clipboard | Native OSC 52 clipboard (Ghostty) |
 | `Escape` | Exit copy mode | Cancel |
 | `/` | Search forward | Vi search |
 | `?` | Search backward | Vi search |
