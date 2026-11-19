@@ -44,13 +44,13 @@ A comprehensive, production-ready tmux configuration optimized for polyglot deve
 ### Window Management
 | Keybinding | Action |
 |------------|--------|
-| `prefix + c` | Create new window (prompts for name) |
+| `prefix + c` | Create new window in the current pane directory |
 | `prefix + C-h` | Select previous window |
 | `prefix + C-l` | Select next window |
 | `prefix + <` | Move window left in status bar |
 | `prefix + >` | Move window right in status bar |
 | `prefix + R` | Rename current session |
-| `prefix + r` (lowercase) | Rename current window |
+| `prefix + ,` | Rename current window |
 | `prefix + x` | Kill current pane (no confirmation) |
 | `prefix + X` | Kill current window (no confirmation) |
 | `prefix + Q` | Kill current session (with confirmation) |
@@ -60,8 +60,8 @@ A comprehensive, production-ready tmux configuration optimized for polyglot deve
 |------------|--------|
 | `prefix + \|` | Split pane horizontally |
 | `prefix + -` | Split pane vertically |
-| `prefix + h/j/k/l` | Resize pane (5 lines at a time) |
-| `prefix + H/J/K/L` | Fine-grained resize (2 lines at a time) |
+| `prefix + arrow` | Resize pane (5 lines at a time) |
+| `prefix + Alt+arrow` | Fine-grained resize (2 lines at a time) |
 | `prefix + m` | Toggle pane zoom (maximize/restore) |
 | `prefix + b` | Break pane out to new window |
 | `prefix + j` | Join pane from another window (horizontal) |
@@ -77,7 +77,7 @@ A comprehensive, production-ready tmux configuration optimized for polyglot deve
 |------------|--------|
 | `prefix + C-j` | Choose session from tree view |
 | `prefix + Space` | Switch to last session |
-| `prefix + N` | Create new session (prompts for name) |
+| `prefix + N` | Create a session named after the current directory |
 | `prefix + w` | Choose window from tree view |
 | `prefix + s` | FZF session switcher (popup) |
 | `prefix + D` | Detach all other clients |
@@ -685,8 +685,8 @@ tmux show-options -g | grep prefix
 │  Ctrl+a |      Split horizontal (left/right)                 │
 │  Ctrl+a -      Split vertical (top/bottom)                   │
 │  Ctrl+h/j/k/l  Navigate panes (NO PREFIX!)                   │
-│  Ctrl+a h/j/k/l Resize pane (5 lines, repeatable)           │
-│  Ctrl+a H/J/K/L Fine resize (2 lines, repeatable)           │
+│  Ctrl+a arrow   Resize pane (5 lines, repeatable)           │
+│  Ctrl+a Alt+arrow Fine resize (2 lines, repeatable)           │
 │  Ctrl+a m      Maximize/zoom pane                            │
 │  Ctrl+a b      Break pane to new window                      │
 │  Ctrl+a j      Join pane from window (horizontal)            │

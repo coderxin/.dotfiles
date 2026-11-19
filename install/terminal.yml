@@ -19,6 +19,11 @@
       create: true
       path: shell
     ~/.zshrc: .config/.zshrc
+    ~/.config/tmuxinator/:
+      glob: true
+      force: false
+      create: true
+      path: .config/tmuxinator/*.yml
     ~/.tmux.conf: .config/.tmux.conf
     ~/.config/nvim/: .config/nvim-setup/
     ~/.config/k9s/hotkey.yml: .config/k9s/hotkey.yml
