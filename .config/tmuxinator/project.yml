@@ -1,0 +1,20 @@
+name: <%= @args[0] || "project" %>
+root: <%= @args[1] || "~/Development/" %>
+
+startup_window: editor
+startup_pane: 0
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - nvim
+        - # shell
+  - git:
+      panes:
+        - lazygit
+  - shell:
+      layout: even-horizontal
+      panes:
+        - # shell 1
+        - # shell 2

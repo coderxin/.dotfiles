@@ -1,0 +1,22 @@
+name: <%= @args[0] || "node" %>
+root: <%= @args[1] || "~/Development/" %>
+
+startup_window: editor
+startup_pane: 0
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - nvim
+        - # shell
+  - git:
+      panes:
+        - lazygit
+  - dev:
+      layout: even-horizontal
+      panes:
+        - npm run dev
+        - # npm run test:watch
+  - logs:
+      - # ready for server logs

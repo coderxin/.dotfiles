@@ -1,0 +1,27 @@
+name: <%= @args[0] || "rails" %>
+root: <%= @args[1] || "~/Development/" %>
+
+startup_window: editor
+startup_pane: 0
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - nvim
+        - # shell
+  - git:
+      layout: even-horizontal
+      panes:
+        - lazygit
+        - tig
+  - servers:
+      layout: tiled
+      panes:
+        - bundle exec rails server
+        - bundle exec sidekiq
+        - # logs: tail -f log/development.log
+  - console:
+      - bundle exec rails console
+  - tests:
+      - # ready for test commands
